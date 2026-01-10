@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -63,10 +64,15 @@ public class ChessPiece {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(pieceType, color);
+    }
+
+    @Override
     public String toString() {
         if (this.getTeamColor() == ChessGame.TeamColor.WHITE) {
-            return this.getPieceType().toString().substring(0,1).toUpperCase();
+            return this.getPieceType().toString().substring(0,2).toUpperCase();
         }
-        return this.getPieceType().toString().substring(0,1).toLowerCase();
+        return this.getPieceType().toString().substring(0,2).toLowerCase();
     }
 }
