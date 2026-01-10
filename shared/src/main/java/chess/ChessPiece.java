@@ -10,7 +10,11 @@ import java.util.Collection;
  */
 public class ChessPiece {
 
+    private ChessGame.TeamColor color;
+    private PieceType pieceType;
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+        color = pieceColor;
+        pieceType = type;
     }
 
     /**
@@ -22,21 +26,21 @@ public class ChessPiece {
         BISHOP,
         KNIGHT,
         ROOK,
-        PAWN
+        PAWN,
     }
 
     /**
      * @return Which team this chess piece belongs to
      */
     public ChessGame.TeamColor getTeamColor() {
-        throw new RuntimeException("Not implemented");
+        return color;
     }
 
     /**
      * @return which type of chess piece this piece is
      */
     public PieceType getPieceType() {
-        throw new RuntimeException("Not implemented");
+        return pieceType;
     }
 
     /**
@@ -48,5 +52,21 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         throw new RuntimeException("Not implemented");
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj.getClass() != ChessPiece.class) {
+            return false;
+        }
+        return ((ChessPiece) obj).getPieceType() == this.getPieceType() && (((ChessPiece) obj).getTeamColor() == this.getTeamColor());
+    }
+
+    @Override
+    public String toString() {
+        if (this.getTeamColor() == ChessGame.TeamColor.WHITE) {
+            return this.getPieceType().toString().substring(0,1).toUpperCase();
+        }
+        return this.getPieceType().toString().substring(0,1).toLowerCase();
     }
 }
