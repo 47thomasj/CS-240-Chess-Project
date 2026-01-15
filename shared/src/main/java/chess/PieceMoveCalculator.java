@@ -10,9 +10,9 @@ import java.util.Objects;
  */
 public class PieceMoveCalculator {
 
-    private ChessPiece.PieceType type;
-    private ChessGame.TeamColor color;
-    private ChessPiece.PieceType promotionPiece; // May be null
+    private final ChessPiece.PieceType type;
+    private final ChessGame.TeamColor color;
+    private final ChessPiece.PieceType promotionPiece; // May be null
     public PieceMoveCalculator(ChessPiece.PieceType pieceType, ChessGame.TeamColor color, ChessPiece.PieceType promotionPiece) {
         type = pieceType;
         this.color = color;
@@ -37,6 +37,28 @@ public class PieceMoveCalculator {
                 if (checkIfMoveLegal(move, board) && move.getEndPosition() != position) {
                     moves.add(move);
                 }
+            }
+        }
+        return moves;
+    }
+
+    private ArrayList<ChessMove> calcualteKightMoves(ChessPosition position, ChessBoard board) {
+        ArrayList<ChessMove> moves = new ArrayList<>();
+
+        ArrayList<ChessPosition> possiblePositions = new ArrayList<>();
+        possiblePositions.add(new ChessPosition(position.getRow() + 2, position.getColumn() - 1));
+        possiblePositions.add(new ChessPosition(position.getRow() + 2, position.getColumn() + 1));
+        possiblePositions.add(new ChessPosition(position.getRow() - 2, position.getColumn() - 1));
+        possiblePositions.add(new ChessPosition(position.getRow() - 2, position.getColumn() + 1));
+        possiblePositions.add(new ChessPosition(position.getRow() - 1, position.getColumn() - 2));
+        possiblePositions.add(new ChessPosition(position.getRow() + 1, position.getColumn() - 2));
+        possiblePositions.add(new ChessPosition(position.getRow() - 1, position.getColumn() + 2));
+        possiblePositions.add(new ChessPosition(position.getRow() + 1, position.getColumn() + 2));
+
+        for (ChessPosition possiblePosition : possiblePositions) {
+            ChessMove possibleMove = new ChessMove(position, possiblePosition, null);
+            if (checkIfMoveLegal(possibleMove, board)) {
+                moves.add(possibleMove);
             }
         }
         return moves;
@@ -80,6 +102,7 @@ public class PieceMoveCalculator {
     public ArrayList<ChessMove> calculateMoves(ChessBoard board, ChessPosition position) {
         return switch (type) {
             case KING -> calculateKingMoves(position, board);
+            case KNIGHT -> calcualteKightMoves(position, board);
             case PAWN -> calculatePawnMoves(position, board);
             default -> new ArrayList<>();
         };
