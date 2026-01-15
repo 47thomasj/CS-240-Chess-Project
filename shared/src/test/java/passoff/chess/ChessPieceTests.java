@@ -52,7 +52,7 @@ public class ChessPieceTests extends EqualsTestingUtility<ChessPiece> {
                 ChessPosition position = new ChessPosition(i, j);
 
                 for (var piece : allPossiblePieces) {
-                    if (piece.getPieceType() == ChessPiece.PieceType.PAWN && (i == 1 || i == 8)) {
+                    if (piece.getType() == ChessPiece.PieceType.PAWN && (i == 1 || i == 8)) {
                         continue;
                     }
 

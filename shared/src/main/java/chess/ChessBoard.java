@@ -11,7 +11,7 @@ import java.util.Objects;
  */
 public class ChessBoard {
 
-    private ChessPiece[][] board;
+    private ChessPiece[][] board; // Bottom left is 1, 1
     public ChessBoard() {
         board = new ChessPiece[8][8];
     }

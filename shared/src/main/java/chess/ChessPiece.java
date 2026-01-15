@@ -2,7 +2,6 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Objects;
 
 /**
@@ -14,10 +13,12 @@ import java.util.Objects;
 public class ChessPiece {
 
     private ChessGame.TeamColor color;
-    private PieceType pieceType;
-    public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
-        color = pieceColor;
-        pieceType = type;
+    private PieceType type;
+    private PieceMoveCalculator moveCalculator;
+    public ChessPiece(ChessGame.TeamColor color, ChessPiece.PieceType type) {
+        this.color = color;
+        this.type = type;
+        moveCalculator = new PieceMoveCalculator(type, color, null); // Temporarily set promotion to null. Maybe that's okay and doesn't need to change?
     }
 
     /**
@@ -42,8 +43,8 @@ public class ChessPiece {
     /**
      * @return which type of chess piece this piece is
      */
-    public PieceType getPieceType() {
-        return pieceType;
+    public PieceType getType() {
+        return type;
     }
 
     /**
@@ -54,8 +55,7 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        Collection<ChessMove> moves = new ArrayList<>();
-        return moves;
+        return moveCalculator.calculateMoves(board, myPosition);
     }
 
     @Override
@@ -63,19 +63,19 @@ public class ChessPiece {
         if (obj.getClass() != ChessPiece.class) {
             return false;
         }
-        return ((ChessPiece) obj).getPieceType() == this.getPieceType() && (((ChessPiece) obj).getTeamColor() == this.getTeamColor());
+        return ((ChessPiece) obj).getType() == this.getType() && (((ChessPiece) obj).getTeamColor() == this.getTeamColor());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(pieceType, color);
+        return Objects.hash(type, color);
     }
 
     @Override
     public String toString() {
         if (this.getTeamColor() == ChessGame.TeamColor.WHITE) {
-            return this.getPieceType().toString().substring(0,2).toUpperCase();
+            return this.getType().toString().substring(0,2).toUpperCase();
         }
-        return this.getPieceType().toString().substring(0,2).toLowerCase();
+        return this.getType().toString().substring(0,2).toLowerCase();
     }
 }
