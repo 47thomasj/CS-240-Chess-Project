@@ -42,6 +42,13 @@ public class PieceMoveCalculator {
         return moves;
     }
 
+    private ArrayList<ChessMove> calculateQueenMoves(ChessPosition position, ChessBoard board) {
+        ArrayList<ChessMove> moves = new ArrayList<>();
+        moves.addAll(calculateBishopMoves(position, board));
+        moves.addAll(calculateRookMoves(position, board));
+        return moves;
+    }
+
     private ArrayList<ChessMove> calculateBishopMoves(ChessPosition position, ChessBoard board) {
         ArrayList<ChessMove> moves = new ArrayList<>();
         boolean nextMoveCaptures = false;
@@ -242,6 +249,7 @@ public class PieceMoveCalculator {
     public ArrayList<ChessMove> calculateMoves(ChessBoard board, ChessPosition position) {
         return switch (type) {
             case KING -> calculateKingMoves(position, board);
+            case QUEEN -> calculateQueenMoves(position, board);
             case BISHOP -> calculateBishopMoves(position, board);
             case KNIGHT -> calcualteKightMoves(position, board);
             case ROOK -> calculateRookMoves(position, board);
