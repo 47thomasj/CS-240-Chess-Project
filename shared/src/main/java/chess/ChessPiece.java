@@ -18,7 +18,7 @@ public class ChessPiece {
     public ChessPiece(ChessGame.TeamColor color, ChessPiece.PieceType type) {
         this.color = color;
         this.type = type;
-        moveCalculator = new PieceMoveCalculator(type, color, null); // Temporarily set promotion to null. Maybe that's okay and doesn't need to change?
+        moveCalculator = new PieceMoveCalculator(type, color); // Temporarily set promotion to null. Maybe that's okay and doesn't need to change?
     }
 
     /**
