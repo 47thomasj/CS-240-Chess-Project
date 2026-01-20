@@ -1,9 +1,6 @@
 package chess;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Objects;
 
 /**
  * A helper class meant to calculate the legal moves of any given piece
@@ -52,9 +49,9 @@ public class PieceMoveCalculator {
         boolean nextMoveCaptures = false;
 
         ChessMove nextUpperRight = new ChessMove(
-                position,
-                new ChessPosition(position.getRow() + 1, position.getColumn() + 1),
-                null
+            position,
+            new ChessPosition(position.getRow() + 1, position.getColumn() + 1),
+            null
         );
         while (checkIfMoveLegal(nextUpperRight, board) && !nextMoveCaptures) {
             moves.add(nextUpperRight);
@@ -68,56 +65,56 @@ public class PieceMoveCalculator {
         nextMoveCaptures = false;
 
         ChessMove nextUpperLeft = new ChessMove(
-                position,
-                new ChessPosition(position.getRow() + 1, position.getColumn() - 1),
-                null
+            position,
+            new ChessPosition(position.getRow() + 1, position.getColumn() - 1),
+            null
         );
         while (checkIfMoveLegal(nextUpperLeft, board) && !nextMoveCaptures) {
             moves.add(nextUpperLeft);
             nextMoveCaptures = board.getPiece(nextUpperLeft.getEndPosition()) != null;
             nextUpperLeft = new ChessMove(
-                    position,
-                    new ChessPosition(nextUpperLeft.getEndPosition().getRow() + 1, nextUpperLeft.getEndPosition().getColumn() - 1),
-                    null
+                position,
+                new ChessPosition(nextUpperLeft.getEndPosition().getRow() + 1, nextUpperLeft.getEndPosition().getColumn() - 1),
+                null
             );
         }
         nextMoveCaptures = false;
 
         ChessMove nextLowerRight = new ChessMove(
-                position,
-                new ChessPosition(position.getRow() - 1, position.getColumn() + 1),
-                null
+            position,
+            new ChessPosition(position.getRow() - 1, position.getColumn() + 1),
+            null
         );
         while (checkIfMoveLegal(nextLowerRight, board) && !nextMoveCaptures) {
             moves.add(nextLowerRight);
             nextMoveCaptures = board.getPiece(nextLowerRight.getEndPosition()) != null;
             nextLowerRight = new ChessMove(
-                    position,
-                    new ChessPosition(nextLowerRight.getEndPosition().getRow() - 1, nextLowerRight.getEndPosition().getColumn() + 1),
-                    null
+                position,
+                new ChessPosition(nextLowerRight.getEndPosition().getRow() - 1, nextLowerRight.getEndPosition().getColumn() + 1),
+                null
             );
         }
         nextMoveCaptures = false;
 
         ChessMove nextLowerLeft = new ChessMove(
-                position,
-                new ChessPosition(position.getRow() - 1, position.getColumn() - 1),
-                null
+            position,
+            new ChessPosition(position.getRow() - 1, position.getColumn() - 1),
+            null
         );
         while (checkIfMoveLegal(nextLowerLeft, board) && !nextMoveCaptures) {
             moves.add(nextLowerLeft);
             nextMoveCaptures = board.getPiece(nextLowerLeft.getEndPosition()) != null;
             nextLowerLeft = new ChessMove(
-                    position,
-                    new ChessPosition(nextLowerLeft.getEndPosition().getRow() - 1, nextLowerLeft.getEndPosition().getColumn() - 1),
-                    null
+                position,
+                new ChessPosition(nextLowerLeft.getEndPosition().getRow() - 1, nextLowerLeft.getEndPosition().getColumn() - 1),
+                null
             );
         }
 
         return moves;
     }
 
-    private ArrayList<ChessMove> calcualteKightMoves(ChessPosition position, ChessBoard board) {
+    private ArrayList<ChessMove> calculateKnightMoves(ChessPosition position, ChessBoard board) {
         ArrayList<ChessMove> moves = new ArrayList<>();
 
         ArrayList<ChessPosition> possiblePositions = new ArrayList<>();
@@ -144,65 +141,65 @@ public class PieceMoveCalculator {
         boolean nextMoveCaptures = false;
 
         ChessMove nextFront = new ChessMove(
-                position,
-                new ChessPosition(position.getRow() + 1, position.getColumn()),
-                null
+            position,
+            new ChessPosition(position.getRow() + 1, position.getColumn()),
+            null
         );
         while (checkIfMoveLegal(nextFront, board) && !nextMoveCaptures) {
             moves.add(nextFront);
             nextMoveCaptures = board.getPiece(nextFront.getEndPosition()) != null;
             nextFront = new ChessMove(
-                    position,
-                    new ChessPosition(nextFront.getEndPosition().getRow() + 1, nextFront.getEndPosition().getColumn()),
-                    null
+                position,
+                new ChessPosition(nextFront.getEndPosition().getRow() + 1, nextFront.getEndPosition().getColumn()),
+                null
             );
         }
         nextMoveCaptures = false;
 
         ChessMove nextBack = new ChessMove(
-                position,
-                new ChessPosition(position.getRow() - 1, position.getColumn()),
-                null
+            position,
+            new ChessPosition(position.getRow() - 1, position.getColumn()),
+            null
         );
         while (checkIfMoveLegal(nextBack, board) && !nextMoveCaptures) {
             moves.add(nextBack);
             nextMoveCaptures = board.getPiece(nextBack.getEndPosition()) != null;
             nextBack = new ChessMove(
-                    position,
-                    new ChessPosition(nextBack.getEndPosition().getRow() - 1, nextBack.getEndPosition().getColumn()),
-                    null
+                position,
+                new ChessPosition(nextBack.getEndPosition().getRow() - 1, nextBack.getEndPosition().getColumn()),
+                null
             );
         }
         nextMoveCaptures = false;
 
         ChessMove nextRight = new ChessMove(
-                position,
-                new ChessPosition(position.getRow(), position.getColumn() + 1),
-                null
+            position,
+            new ChessPosition(position.getRow(), position.getColumn() + 1),
+            null
         );
         while (checkIfMoveLegal(nextRight, board) && !nextMoveCaptures) {
             moves.add(nextRight);
             nextMoveCaptures = board.getPiece(nextRight.getEndPosition()) != null;
             nextRight = new ChessMove(
-                    position,
-                    new ChessPosition(nextRight.getEndPosition().getRow(), nextRight.getEndPosition().getColumn() + 1),
-                    null
+                position,
+                new ChessPosition(nextRight.getEndPosition().getRow(), nextRight.getEndPosition().getColumn() + 1),
+                null
             );
         }
         nextMoveCaptures = false;
 
         ChessMove nextLeft = new ChessMove(
-                position,
-                new ChessPosition(position.getRow(), position.getColumn() - 1),
-                null
+            position,
+            new ChessPosition(position.getRow(), position.getColumn() - 1),
+            null
         );
         while (checkIfMoveLegal(nextLeft, board) && !nextMoveCaptures) {
             moves.add(nextLeft);
             nextMoveCaptures = board.getPiece(nextLeft.getEndPosition()) != null;
             nextLeft = new ChessMove(
-                    position,
-                    new ChessPosition(nextLeft.getEndPosition().getRow(), nextLeft.getEndPosition().getColumn() - 1),
-                    null
+                position,
+                new ChessPosition(nextLeft.getEndPosition().getRow(), nextLeft.getEndPosition().getColumn() - 1),
+                null
             );
         }
 
@@ -244,7 +241,7 @@ public class PieceMoveCalculator {
             ChessMove twoFrontNoPromo = new ChessMove(
                 position,
                 new ChessPosition(
-                        color == ChessGame.TeamColor.WHITE ? getPawnMoveRow(position) + 1 : getPawnMoveRow(position) - 1, position.getColumn()
+                    color == ChessGame.TeamColor.WHITE ? getPawnMoveRow(position) + 1 : getPawnMoveRow(position) - 1, position.getColumn()
                 ),
                 null
             );
@@ -254,7 +251,7 @@ public class PieceMoveCalculator {
                         ChessMove twoFrontPromo = new ChessMove(
                             position,
                             new ChessPosition(
-                                    color == ChessGame.TeamColor.WHITE ? getPawnMoveRow(position) + 1 : getPawnMoveRow(position) - 1, position.getColumn()
+                                color == ChessGame.TeamColor.WHITE ? getPawnMoveRow(position) + 1 : getPawnMoveRow(position) - 1, position.getColumn()
                             ),
                             promotionType
                         );
@@ -295,9 +292,9 @@ public class PieceMoveCalculator {
             if (color == ChessGame.TeamColor.WHITE ? frontRightNoPromo.getEndPosition().getRow() == 8: frontRightNoPromo.getEndPosition().getRow() == 1) {
                 for (ChessPiece.PieceType promotionType: promotionPieces) {
                     ChessMove frontRightPromo = new ChessMove(
-                            position,
-                            new ChessPosition(getPawnMoveRow(position), position.getColumn() + 1),
-                            promotionType
+                        position,
+                        new ChessPosition(getPawnMoveRow(position), position.getColumn() + 1),
+                        promotionType
                     );
                     moves.add(frontRightPromo);
                 }
@@ -314,7 +311,7 @@ public class PieceMoveCalculator {
             case KING -> calculateKingMoves(position, board);
             case QUEEN -> calculateQueenMoves(position, board);
             case BISHOP -> calculateBishopMoves(position, board);
-            case KNIGHT -> calcualteKightMoves(position, board);
+            case KNIGHT -> calculateKnightMoves(position, board);
             case ROOK -> calculateRookMoves(position, board);
             case PAWN -> calculatePawnMoves(position, board);
             default -> new ArrayList<>();
