@@ -1,6 +1,5 @@
 package chess;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -43,7 +42,7 @@ public class ChessPiece {
     /**
      * @return which type of chess piece this piece is
      */
-    public PieceType getType() {
+    public PieceType getPieceType() {
         return type;
     }
 
@@ -63,7 +62,7 @@ public class ChessPiece {
         if (obj.getClass() != ChessPiece.class) {
             return false;
         }
-        return ((ChessPiece) obj).getType() == this.getType() && (((ChessPiece) obj).getTeamColor() == this.getTeamColor());
+        return ((ChessPiece) obj).getPieceType() == this.getPieceType() && (((ChessPiece) obj).getTeamColor() == this.getTeamColor());
     }
 
     @Override
@@ -74,8 +73,8 @@ public class ChessPiece {
     @Override
     public String toString() {
         if (this.getTeamColor() == ChessGame.TeamColor.WHITE) {
-            return this.getType().toString().substring(0,2).toUpperCase();
+            return this.getPieceType().toString().substring(0,2).toUpperCase();
         }
-        return this.getType().toString().substring(0,2).toLowerCase();
+        return this.getPieceType().toString().substring(0,2).toLowerCase();
     }
 }
