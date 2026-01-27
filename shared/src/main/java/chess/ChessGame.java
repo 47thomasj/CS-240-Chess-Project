@@ -126,9 +126,19 @@ public class ChessGame {
      */
     public boolean isInCheckmate(TeamColor teamColor) {
         ChessPosition kingPiecePosition = getKingPosition(teamColor);
-        Collection<ChessMove> kingMoves = this.validMoves(kingPiecePosition);
-        boolean isInCheck = this.isInCheck(teamColor);
-        return isInCheck && kingMoves.isEmpty();
+        Collection<ChessMove> allMoves = new ArrayList<>();
+        for (int row=1; row<=8; row++) {
+            for (int col=1; col<=8; col++) {
+                ChessPosition position = new ChessPosition(row, col);
+                ChessPiece piece = board.getPiece(position);
+                if (piece != null && piece.getTeamColor() != teamColor) {
+                    allMoves.addAll(this.validMoves(position));
+                }
+            }
+        }
+
+        ChessBoard currentBoard = this.board.clone();
+
     }
 
     /**
