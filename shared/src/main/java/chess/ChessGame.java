@@ -159,4 +159,18 @@ public class ChessGame {
     public ChessBoard getBoard() {
         return this.board;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null || obj.getClass() != getClass()) {
+            return false;
+        }
+        ChessGame that = (ChessGame) obj;
+        return Objects.equals(this.board, that.board) && Objects.equals(this.teamTurn, that.teamTurn);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.board, this.teamTurn);
+    }
 }
