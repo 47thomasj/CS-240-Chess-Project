@@ -215,7 +215,12 @@ public class PieceMoveCalculator {
 
     private ArrayList<ChessMove> calculatePawnMoves(ChessPosition position, ChessBoard board) {
         ArrayList<ChessMove> moves = new ArrayList<>();
-        ChessPiece.PieceType[] promotionPieces = {ChessPiece.PieceType.ROOK, ChessPiece.PieceType.BISHOP, ChessPiece.PieceType.QUEEN, ChessPiece.PieceType.KNIGHT};
+        ChessPiece.PieceType[] promotionPieces = {
+                ChessPiece.PieceType.ROOK,
+                ChessPiece.PieceType.BISHOP,
+                ChessPiece.PieceType.QUEEN,
+                ChessPiece.PieceType.KNIGHT
+        };
 
         ChessMove oneFrontNoPromo = new ChessMove(
             position,
