@@ -373,16 +373,15 @@ public class PieceMoveCalculator {
         if (game != null && game.getLastMove() != null) {
             ChessMove lastMove = game.getLastMove();
             ChessPiece lastMovedPiece = board.getPiece(lastMove.getEndPosition());
+
+            boolean lastMoveTypeIsPawn = lastMovedPiece != null && lastMovedPiece.getPieceType() == ChessPiece.PieceType.PAWN;
+            boolean lastMoveTypeIsNotSameTeam = lastMovedPiece != null && lastMovedPiece.getTeamColor() != color;
+            boolean lastMoveStartRowIsPawnRow = lastMove.getStartPosition().getRow() == (color == ChessGame.TeamColor.WHITE ? 7 : 2);
+            boolean lastMoveEndRowIsEnPassantRow = lastMove.getEndPosition().getRow() == (color == ChessGame.TeamColor.WHITE ? 5 : 4);
             
-            if (lastMovedPiece != null && 
-                lastMovedPiece.getPieceType() == ChessPiece.PieceType.PAWN &&
-                lastMovedPiece.getTeamColor() != color &&
-                lastMove.getStartPosition().getRow() == (color == ChessGame.TeamColor.WHITE ? 2 : 7) &&
-                lastMove.getEndPosition().getRow() == (color == ChessGame.TeamColor.WHITE ? 4 : 5)) {
-                
+            if (lastMoveTypeIsPawn && lastMoveTypeIsNotSameTeam && lastMoveStartRowIsPawnRow && lastMoveEndRowIsEnPassantRow) {
                 int enPassantRow = lastMove.getEndPosition().getRow();
                 if (position.getRow() == enPassantRow) {
-                    
                     int row = getPawnMoveRow(position);
                     int col = lastMove.getEndPosition().getColumn();
                     ChessMove enPassantMove = new ChessMove(position, new ChessPosition(row, col), null);
