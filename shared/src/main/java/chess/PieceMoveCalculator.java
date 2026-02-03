@@ -32,7 +32,7 @@ public class PieceMoveCalculator {
         ChessPiece rightRook = board.getPiece(rightRookPosition);
 
         if (leftRook != null && !leftRook.getHasMoved() && !board.getPiece(position).getHasMoved()) {
-            ChessMove leftCastle = new ChessMove(position, new ChessPosition(position.getRow(), position.getColumn() - 2), null);
+            ChessMove leftCastle = new ChessMove(position, new ChessPosition(position.getRow(), position.getColumn() - 2), ChessPiece.PieceType.KING);
             ChessMove leftHalfCastle = new ChessMove(position, new ChessPosition(position.getRow(), position.getColumn() - 1), null);
             if (checkIfMoveLegal(leftHalfCastle, board) && checkIfMoveLegal(leftCastle, board)) {
                 moves.add(leftCastle);
@@ -40,7 +40,7 @@ public class PieceMoveCalculator {
         }
 
         if (rightRook != null && !rightRook.getHasMoved() && !board.getPiece(position).getHasMoved()) {
-            ChessMove rightCastle = new ChessMove(position, new ChessPosition(position.getRow(), position.getColumn() + 2), null);
+            ChessMove rightCastle = new ChessMove(position, new ChessPosition(position.getRow(), position.getColumn() + 2), ChessPiece.PieceType.KING);
             ChessMove rightHalfCastle = new ChessMove(position, new ChessPosition(position.getRow(), position.getColumn() + 1), null);
             if (checkIfMoveLegal(rightHalfCastle, board) && checkIfMoveLegal(rightCastle, board)) {
                 moves.add(rightCastle);

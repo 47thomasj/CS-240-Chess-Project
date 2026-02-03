@@ -15,11 +15,11 @@ public class ChessPiece {
     private PieceType type;
     private PieceMoveCalculator moveCalculator;
     private boolean hasMoved;
-    public ChessPiece(ChessGame.TeamColor color, ChessPiece.PieceType type, boolean hasMoved) {
+    public ChessPiece(ChessGame.TeamColor color, ChessPiece.PieceType type) {
         this.color = color;
         this.type = type;
         moveCalculator = new PieceMoveCalculator(type, color);
-        this.hasMoved = hasMoved;
+        this.hasMoved = false;
     }
 
     /**
