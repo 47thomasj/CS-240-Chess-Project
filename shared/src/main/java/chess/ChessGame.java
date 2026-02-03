@@ -66,8 +66,9 @@ public class ChessGame {
         Collection<ChessMove> validMoves = new ArrayList<>();
 
         ChessPiece piece = this.board.getPiece(startPosition);
+        piece.setGame(this);
         if (piece != null) {
-            Collection<ChessMove> pieceMoves = piece.pieceMoves(this.board, startPosition, this);
+            Collection<ChessMove> pieceMoves = piece.pieceMoves(this.board, startPosition);
             for (ChessMove move: pieceMoves) {
                 ChessBoard currentBoard = new ChessBoard(board);
                 this.board.addPiece(move.getEndPosition(), board.getPiece(move.getStartPosition()));
@@ -168,7 +169,7 @@ public class ChessGame {
                 if (piece == null || piece.getTeamColor() != otherTeam) {
                     continue;
                 }
-                Collection<ChessMove> moves = piece.pieceMoves(board, attackerPosition, null);
+                Collection<ChessMove> moves = piece.pieceMoves(board, attackerPosition);
                 for (ChessMove move : moves) {
                     if (Objects.equals(move.getEndPosition(), position)) {
                         return true;
@@ -196,7 +197,7 @@ public class ChessGame {
                 if (piece == null) {
                     continue;
                 }
-                moves = piece.pieceMoves(board, position, null);
+                moves = piece.pieceMoves(board, position);
                 Collection<ChessPosition> endPositions = moves.stream().map(ChessMove::getEndPosition).toList();
                 for (ChessPosition endPosition: endPositions) {
                     if (Objects.equals(endPosition, kingPiecePosition)) {

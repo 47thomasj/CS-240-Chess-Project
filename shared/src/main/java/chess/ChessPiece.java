@@ -15,11 +15,13 @@ public class ChessPiece {
     private PieceType type;
     private PieceMoveCalculator moveCalculator;
     private boolean hasMoved;
+    private ChessGame game;
     public ChessPiece(ChessGame.TeamColor color, ChessPiece.PieceType type) {
         this.color = color;
         this.type = type;
         moveCalculator = new PieceMoveCalculator(type, color);
         this.hasMoved = false;
+        this.game = null;
     }
 
     /**
@@ -59,13 +61,19 @@ public class ChessPiece {
     public void setHasMoved() { this.hasMoved = true; }
 
     /**
+     * Sets the game that the piece is in
+     * @param game the game that the piece is in
+     */
+    public void setGame(ChessGame game) { this.game = game; }
+
+    /**
      * Calculates all the positions a chess piece can move to
      * Does not take into account moves that are illegal due to leaving the king in
      * danger
      *
      * @return Collection of valid moves
      */
-    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition, ChessGame game) {
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         return moveCalculator.calculateMoves(board, myPosition, game);
     }
 
