@@ -243,10 +243,11 @@ public class PieceMoveCalculator {
         }
 
         if (color == ChessGame.TeamColor.WHITE ? position.getRow() == 2: position.getRow() == 7) {
+            int row = color == ChessGame.TeamColor.WHITE ? getPawnMoveRow(position) + 1 : getPawnMoveRow(position) - 1;
             ChessMove twoFrontNoPromo = new ChessMove(
                 position,
                 new ChessPosition(
-                    color == ChessGame.TeamColor.WHITE ? getPawnMoveRow(position) + 1 : getPawnMoveRow(position) - 1, position.getColumn()
+                    row, position.getColumn()
                 ),
                 null
             );
@@ -268,9 +269,10 @@ public class PieceMoveCalculator {
             }
         }
 
+        ChessPosition frontLeftNoPromoPosition = new ChessPosition(getPawnMoveRow(position), position.getColumn() - 1);
         ChessMove frontLeftNoPromo = new ChessMove(
             position,
-            new ChessPosition(getPawnMoveRow(position), position.getColumn() - 1),
+            frontLeftNoPromoPosition,
             null
         );
         if (checkIfMoveLegal(frontLeftNoPromo, board) && board.getPiece(frontLeftNoPromo.getEndPosition()) != null) {
@@ -288,9 +290,10 @@ public class PieceMoveCalculator {
             }
         }
 
+        ChessPosition frontRightNoPromoPosition = new ChessPosition(getPawnMoveRow(position), position.getColumn() + 1);
         ChessMove frontRightNoPromo = new ChessMove(
                 position,
-                new ChessPosition(getPawnMoveRow(position), position.getColumn() + 1),
+                frontRightNoPromoPosition,
                 null
         );
         if (checkIfMoveLegal(frontRightNoPromo, board) && board.getPiece(frontRightNoPromo.getEndPosition()) != null) {
