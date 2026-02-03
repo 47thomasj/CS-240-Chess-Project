@@ -49,7 +49,10 @@ public class ChessMove {
         if (obj.getClass() != ChessMove.class) {
             return false;
         }
-        return Objects.equals(this.start, ((ChessMove) obj).start) && Objects.equals(this.end, ((ChessMove) obj).end) && Objects.equals(this.promotion, ((ChessMove) obj).promotion);
+        boolean sameStart = Objects.equals(this.start, ((ChessMove) obj).start);
+        boolean sameEnd = Objects.equals(this.end, ((ChessMove) obj).end);
+        boolean samePromo = Objects.equals(this.promotion, ((ChessMove) obj).promotion);
+        return sameStart && sameEnd && samePromo;
     }
 
     @Override
