@@ -14,10 +14,12 @@ public class ChessPiece {
     private ChessGame.TeamColor color;
     private PieceType type;
     private PieceMoveCalculator moveCalculator;
-    public ChessPiece(ChessGame.TeamColor color, ChessPiece.PieceType type) {
+    private boolean hasMoved;
+    public ChessPiece(ChessGame.TeamColor color, ChessPiece.PieceType type, boolean hasMoved) {
         this.color = color;
         this.type = type;
         moveCalculator = new PieceMoveCalculator(type, color);
+        this.hasMoved = hasMoved;
     }
 
     /**
@@ -45,6 +47,16 @@ public class ChessPiece {
     public PieceType getPieceType() {
         return type;
     }
+
+    /**
+     * @return whether the given piece has ever been moved.
+     */
+    public boolean getHasMoved() { return hasMoved; }
+
+    /**
+     * Sets hasMoved to true.
+     */
+    public void setHasMoved() { this.hasMoved = true; }
 
     /**
      * Calculates all the positions a chess piece can move to

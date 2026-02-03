@@ -23,6 +23,33 @@ public class PieceMoveCalculator {
         return !hasPiece || board.getPiece(move.getEndPosition()).getTeamColor() != this.color;
     }
 
+    private ArrayList<ChessMove> calculateCastle(ChessPosition position, ChessBoard board) {
+        ArrayList<ChessMove> moves = new ArrayList<>();
+        ChessGame.TeamColor kingColor = board.getPiece(position).getTeamColor();
+        ChessPosition leftRookPosition = kingColor == ChessGame.TeamColor.WHITE ? new ChessPosition(1, 1) : new ChessPosition(8, 1);
+        ChessPosition rightRookPosition = kingColor == ChessGame.TeamColor.WHITE ? new ChessPosition(1, 8) : new ChessPosition(8, 8);
+        ChessPiece leftRook = board.getPiece(leftRookPosition);
+        ChessPiece rightRook = board.getPiece(rightRookPosition);
+
+        if (leftRook != null && !leftRook.getHasMoved() && !board.getPiece(position).getHasMoved()) {
+            ChessMove leftCastle = new ChessMove(position, new ChessPosition(position.getRow(), position.getColumn() - 2), null);
+            ChessMove leftHalfCastle = new ChessMove(position, new ChessPosition(position.getRow(), position.getColumn() - 1), null);
+            if (checkIfMoveLegal(leftHalfCastle, board) && checkIfMoveLegal(leftCastle, board)) {
+                moves.add(leftCastle);
+            }
+        }
+
+        if (rightRook != null && !rightRook.getHasMoved() && !board.getPiece(position).getHasMoved()) {
+            ChessMove rightCastle = new ChessMove(position, new ChessPosition(position.getRow(), position.getColumn() + 2), null);
+            ChessMove rightHalfCastle = new ChessMove(position, new ChessPosition(position.getRow(), position.getColumn() + 1), null);
+            if (checkIfMoveLegal(rightHalfCastle, board) && checkIfMoveLegal(rightCastle, board)) {
+                moves.add(rightCastle);
+            }
+        }
+
+        return moves;
+    }
+
     private ArrayList<ChessMove> calculateKingMoves(ChessPosition position, ChessBoard board) {
         ArrayList<ChessMove> moves = new ArrayList<>();
 
@@ -34,6 +61,7 @@ public class PieceMoveCalculator {
                 }
             }
         }
+        moves.addAll(calculateCastle(position, board));
         return moves;
     }
 
