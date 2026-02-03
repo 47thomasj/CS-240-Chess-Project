@@ -298,6 +298,10 @@ public class PieceMoveCalculator {
         return moves;
     }
 
+    private boolean checkIfEndInPromotionRow(ChessPosition position) {
+        return color == ChessGame.TeamColor.WHITE ? position.getRow() == 8 : position.getRow() == 1;
+    }
+
     private ArrayList<ChessMove> calculatePawnMoves(ChessPosition position, ChessBoard board, ChessGame game) {
         ArrayList<ChessMove> moves = new ArrayList<>();
         ChessPiece.PieceType[] promotionPieces = {
@@ -313,7 +317,7 @@ public class PieceMoveCalculator {
             null
         );
         if (checkIfMoveLegal(oneFrontNoPromo, board) && board.getPiece(oneFrontNoPromo.getEndPosition()) == null) {
-            if (color == ChessGame.TeamColor.WHITE ? oneFrontNoPromo.getEndPosition().getRow() == 8: oneFrontNoPromo.getEndPosition().getRow() == 1) {
+            if (checkIfEndInPromotionRow(oneFrontNoPromo.getEndPosition())) {
                 for (ChessPiece.PieceType promotionType: promotionPieces) {
                     ChessPosition endPosition = new ChessPosition(getPawnMoveRow(position), position.getColumn());
                     ChessMove oneFrontPromo = new ChessMove(position, endPosition, promotionType);
@@ -337,7 +341,7 @@ public class PieceMoveCalculator {
             boolean nullAtMoveEnd = board.getPiece(twoFrontNoPromo.getEndPosition()) == null;
             boolean halfMoveIsLegal = checkIfMoveLegal(oneFrontNoPromo, board);
             if (moveIsLegal && nullAtMoveEnd && halfMoveIsLegal && board.getPiece(oneFrontNoPromo.getEndPosition()) == null) {
-                if (color == ChessGame.TeamColor.WHITE ? twoFrontNoPromo.getEndPosition().getRow() == 8: twoFrontNoPromo.getEndPosition().getRow() == 1) {
+                if (checkIfEndInPromotionRow(twoFrontNoPromo.getEndPosition())) {
                     for (ChessPiece.PieceType promotionType: promotionPieces) {
                         ChessPosition endPosition = new ChessPosition(color == ChessGame.TeamColor.WHITE ? getPawnMoveRow(position) + 1 : getPawnMoveRow(position) - 1, position.getColumn());
                         ChessMove twoFrontPromo = new ChessMove(position, endPosition, promotionType);
@@ -356,7 +360,7 @@ public class PieceMoveCalculator {
             null
         );
         if (checkIfMoveLegal(frontLeftNoPromo, board) && board.getPiece(frontLeftNoPromo.getEndPosition()) != null) {
-            if (color == ChessGame.TeamColor.WHITE ? frontLeftNoPromo.getEndPosition().getRow() == 8: frontLeftNoPromo.getEndPosition().getRow() == 1) {
+            if (checkIfEndInPromotionRow(frontLeftNoPromo.getEndPosition())) {
                 for (ChessPiece.PieceType promotionType: promotionPieces) {
                     ChessPosition endPosition = new ChessPosition(getPawnMoveRow(position), position.getColumn() - 1);
                     ChessMove frontLeftPromo = new ChessMove(position, endPosition, promotionType);
@@ -369,18 +373,15 @@ public class PieceMoveCalculator {
 
         ChessPosition frontRightNoPromoPosition = new ChessPosition(getPawnMoveRow(position), position.getColumn() + 1);
         ChessMove frontRightNoPromo = new ChessMove(
-                position,
-                frontRightNoPromoPosition,
-                null
+            position,
+            frontRightNoPromoPosition,
+            null
         );
         if (checkIfMoveLegal(frontRightNoPromo, board) && board.getPiece(frontRightNoPromo.getEndPosition()) != null) {
-            if (color == ChessGame.TeamColor.WHITE ? frontRightNoPromo.getEndPosition().getRow() == 8: frontRightNoPromo.getEndPosition().getRow() == 1) {
+            if (checkIfEndInPromotionRow(frontRightNoPromo.getEndPosition())) {
                 for (ChessPiece.PieceType promotionType: promotionPieces) {
-                    ChessMove frontRightPromo = new ChessMove(
-                        position,
-                        new ChessPosition(getPawnMoveRow(position), position.getColumn() + 1),
-                        promotionType
-                    );
+                    ChessPosition endPosition = new ChessPosition(getPawnMoveRow(position), position.getColumn() + 1);
+                    ChessMove frontRightPromo = new ChessMove(position, endPosition, promotionType);
                     moves.add(frontRightPromo);
                 }
             } else {
