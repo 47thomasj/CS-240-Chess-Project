@@ -251,7 +251,10 @@ public class PieceMoveCalculator {
                 ),
                 null
             );
-            if (checkIfMoveLegal(twoFrontNoPromo, board) && board.getPiece(twoFrontNoPromo.getEndPosition()) == null && checkIfMoveLegal(oneFrontNoPromo, board) && board.getPiece(oneFrontNoPromo.getEndPosition()) == null) {
+            boolean moveIsLegal = checkIfMoveLegal(twoFrontNoPromo, board);
+            boolean nullAtMoveEnd = board.getPiece(twoFrontNoPromo.getEndPosition()) == null;
+            boolean halfMoveIsLegal = checkIfMoveLegal(oneFrontNoPromo, board);
+            if (moveIsLegal && nullAtMoveEnd && halfMoveIsLegal && board.getPiece(oneFrontNoPromo.getEndPosition()) == null) {
                 if (color == ChessGame.TeamColor.WHITE ? twoFrontNoPromo.getEndPosition().getRow() == 8: twoFrontNoPromo.getEndPosition().getRow() == 1) {
                     for (ChessPiece.PieceType promotionType: promotionPieces) {
                         ChessMove twoFrontPromo = new ChessMove(
