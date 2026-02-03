@@ -46,10 +46,12 @@ public class PieceMoveCalculator {
                 ChessPosition intermediate = new ChessPosition(position.getRow(), position.getColumn() - 1);
                 ChessPosition destination = new ChessPosition(position.getRow(), position.getColumn() - 2);
                 
-                if (!game.isSquareUnderAttack(position, kingColor) &&
+                ChessMove queensideCastle = new ChessMove(position, destination, null);
+                if (checkIfMoveLegal(queensideCastle, board) &&
+                    !game.isSquareUnderAttack(position, kingColor) &&
                     !game.isSquareUnderAttack(intermediate, kingColor) &&
                     !game.isSquareUnderAttack(destination, kingColor)) {
-                    moves.add(new ChessMove(position, destination, null));
+                    moves.add(queensideCastle);
                 }
             }
         }
@@ -67,10 +69,12 @@ public class PieceMoveCalculator {
                 ChessPosition intermediate = new ChessPosition(position.getRow(), position.getColumn() + 1);
                 ChessPosition destination = new ChessPosition(position.getRow(), position.getColumn() + 2);
                 
-                if (!game.isSquareUnderAttack(position, kingColor) &&
+                ChessMove kingsideCastle = new ChessMove(position, destination, null);
+                if (checkIfMoveLegal(kingsideCastle, board) &&
+                    !game.isSquareUnderAttack(position, kingColor) &&
                     !game.isSquareUnderAttack(intermediate, kingColor) &&
                     !game.isSquareUnderAttack(destination, kingColor)) {
-                    moves.add(new ChessMove(position, destination, null));
+                    moves.add(kingsideCastle);
                 }
             }
         }
