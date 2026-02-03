@@ -343,7 +343,7 @@ public class PieceMoveCalculator {
             if (moveIsLegal && nullAtMoveEnd && halfMoveIsLegal && board.getPiece(oneFrontNoPromo.getEndPosition()) == null) {
                 if (checkIfEndInPromotionRow(twoFrontNoPromo.getEndPosition())) {
                     for (ChessPiece.PieceType promotionType: promotionPieces) {
-                        ChessPosition endPosition = new ChessPosition(color == ChessGame.TeamColor.WHITE ? getPawnMoveRow(position) + 1 : getPawnMoveRow(position) - 1, position.getColumn());
+                        ChessPosition endPosition = new ChessPosition(row, position.getColumn());
                         ChessMove twoFrontPromo = new ChessMove(position, endPosition, promotionType);
                         moves.add(twoFrontPromo);
                     }
