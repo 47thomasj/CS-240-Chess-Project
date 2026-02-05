@@ -189,24 +189,7 @@ public class ChessGame {
     public boolean isInCheck(TeamColor teamColor) {
         ChessPosition kingPiecePosition = getKingPosition(teamColor);
 
-        for (int row=1; row<=8; row++) {
-            for (int col = 1; col <= 8; col++) {
-                ChessPosition position = new ChessPosition(row, col);
-                ChessPiece piece = this.getBoard().getPiece(position);
-                Collection<ChessMove> moves;
-                if (piece == null) {
-                    continue;
-                }
-                moves = piece.pieceMoves(board, position);
-                Collection<ChessPosition> endPositions = moves.stream().map(ChessMove::getEndPosition).toList();
-                for (ChessPosition endPosition: endPositions) {
-                    if (Objects.equals(endPosition, kingPiecePosition)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
+        return isSquareUnderAttack(kingPiecePosition, teamColor);
     }
 
     private Collection<ChessMove> getAllTeamMoves(TeamColor teamColor) {
