@@ -12,6 +12,8 @@ import models.requests.LogoutRequest;
 import models.requests.RegisterRequest;
 import models.results.RegisterResult;
 
+import java.util.Objects;
+
 public class UserService {
     private final UserDAO userDAO;
     private final AuthDAO authDAO;
@@ -31,6 +33,15 @@ public class UserService {
         return new RegisterResult(user.username(), token.getAuthToken());
     }
 
-    public void login(LoginRequest loginRequest) {}
+    public void login(LoginRequest loginRequest) throws DataAccessException {
+        UserData userData = userDAO.readUser(loginRequest.username());
+        if (!Objects.equals(userData.password(), loginRequest.password())) {
+            throw new DataAccessException("Error: incorrect password");
+        }
+
+        Authtoken token = new Authtoken();
+        AuthData authData = new AuthData(token.getAuthToken(), loginRequest.username());
+        authDAO.createAuth(authData);
+    }
     public void logout(LogoutRequest logoutRequest) {}
 }
