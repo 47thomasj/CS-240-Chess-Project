@@ -80,25 +80,25 @@ public class UserDAO {
         };
     }
 
-    void createUser(UserData data) throws DataAccessException {
+    public void createUser(UserData data) throws DataAccessException {
         if (userTable.containsKey(data.username())) throw new DataAccessException("Error: username already taken");
         userTable.put(data.username(), data);
     }
 
-    UserData readUser(UserData data) throws DataAccessException {
-        if (!userTable.containsKey(data.username())) throw new DataAccessException("Error: invalid username");
-        return userTable.get(data.username());
+    public UserData readUser(String username) throws DataAccessException {
+        if (!userTable.containsKey(username)) throw new DataAccessException("Error: invalid username");
+        return userTable.get(username);
     }
-    void updateUser(UserData data) throws DataAccessException {
+    public void updateUser(UserData data) throws DataAccessException {
         if (!userTable.containsKey(data.username())) throw new DataAccessException("Error: invalid username");
         userTable.replace(data.username(), data);
     }
-    void deleteUser(UserData data) throws DataAccessException {
+    public void deleteUser(UserData data) throws DataAccessException {
         if (!userTable.containsKey(data.username())) throw new DataAccessException("Error: invalid username");
         userTable.remove(data.username());
     }
 
-    void clear() {
+    public void clear() {
         userTable = new Map<String, UserData>() {
             @Override
             public int size() {

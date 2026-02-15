@@ -4,10 +4,8 @@ import model.AuthData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.UUID;
 
 public class AuthDAO {
     private Map<String, AuthData> authTable;
@@ -79,26 +77,28 @@ public class AuthDAO {
         };
     }
 
-    void createAuth(AuthData data) throws DataAccessException {
-        authTable.put(data.authToken(), data);
+    public void createAuth(String username) throws DataAccessException {
+        String authToken = UUID.randomUUID().toString();
+        AuthData authData = new AuthData(authToken, username);
+        authTable.put(authToken, authData);
     }
 
-    AuthData readAuth(AuthData data) throws DataAccessException {
+    public AuthData readAuth(AuthData data) throws DataAccessException {
         if (!authTable.containsKey(data.authToken())) throw new DataAccessException("Error: unauthorized");
         return authTable.get(data.authToken());
     }
 
-    void updateAuth(AuthData data) throws DataAccessException {
+    public void updateAuth(AuthData data) throws DataAccessException {
         if (!authTable.containsKey(data.authToken())) throw new DataAccessException("Error: unauthorized");
         authTable.replace(data.authToken(), data);
     }
 
-    void deleteAuth(AuthData data) throws DataAccessException {
+    public void deleteAuth(AuthData data) throws DataAccessException {
         if (!authTable.containsKey(data.authToken())) throw new DataAccessException("Error: unauthorized");
         authTable.remove(data.authToken());
     }
 
-    void clear() {
+    public void clear() {
         authTable = new Map<String, AuthData>() {
             @Override
             public int size() {
