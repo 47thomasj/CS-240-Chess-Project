@@ -13,9 +13,9 @@ public class AuthDAO {
         authTable.put(authData.authToken(), authData);
     }
 
-    public AuthData readAuth(AuthData data) throws DataAccessException {
-        if (!authTable.containsKey(data.authToken())) throw new DataAccessException("Error: unauthorized");
-        return authTable.get(data.authToken());
+    public AuthData readAuth(String authToken) throws DataAccessException {
+        if (!authTable.containsKey(authToken)) throw new DataAccessException("Error: unauthorized");
+        return authTable.get(authToken);
     }
 
     public void updateAuth(AuthData data) throws DataAccessException {
