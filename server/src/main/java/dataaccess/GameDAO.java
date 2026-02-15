@@ -2,8 +2,6 @@ package dataaccess;
 
 import model.GameData;
 
-import java.util.Collection;
-
 public class GameDAO {
     void createGame(GameData data) throws DataAccessException {}
     void readGame(GameData data) throws DataAccessException {}

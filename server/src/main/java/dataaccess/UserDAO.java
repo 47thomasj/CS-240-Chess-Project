@@ -1,12 +1,168 @@
 package dataaccess;
 
 import model.UserData;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class UserDAO {
-    void createUser(UserData data) throws DataAccessException {}
-    void readUser(UserData data) throws DataAccessException {}
-    void updateUser(UserData data) throws DataAccessException {}
-    void deleteUser(UserData data) throws DataAccessException {}
-    
-    void clear() throws DataAccessException {}
+
+    private Map<String, UserData> users;
+    private UserDAO() {
+        users = new Map<String, UserData>() {
+            @Override
+            public int size() {
+                return 0;
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return false;
+            }
+
+            @Override
+            public boolean containsKey(Object key) {
+                return false;
+            }
+
+            @Override
+            public boolean containsValue(Object value) {
+                return false;
+            }
+
+            @Override
+            public UserData get(Object key) {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public UserData put(String key, UserData value) {
+                return null;
+            }
+
+            @Override
+            public UserData remove(Object key) {
+                return null;
+            }
+
+            @Override
+            public void putAll(@NotNull Map<? extends String, ? extends UserData> m) {
+
+            }
+
+            @Override
+            public void clear() {
+
+            }
+
+            @NotNull
+            @Override
+            public Set<String> keySet() {
+                return Set.of();
+            }
+
+            @NotNull
+            @Override
+            public Collection<UserData> values() {
+                return List.of();
+            }
+
+            @NotNull
+            @Override
+            public Set<Entry<String, UserData>> entrySet() {
+                return Set.of();
+            }
+        };
+    }
+
+    void createUser(UserData data) throws DataAccessException {
+        if (users.containsKey(data.username())) throw new DataAccessException("Error: username already taken");
+        users.put(data.username(), data);
+    }
+
+    UserData readUser(UserData data) throws DataAccessException {
+        if (!users.containsKey(data.username())) throw new DataAccessException("Error: invalid username");
+        return users.get(data.username());
+    }
+    void updateUser(UserData data) throws DataAccessException {
+        if (!users.containsKey(data.username())) throw new DataAccessException("Error: invalid username");
+        users.replace(data.username(), data);
+    }
+    void deleteUser(UserData data) throws DataAccessException {
+        if (!users.containsKey(data.username())) throw new DataAccessException("Error: invalid username");
+        users.remove(data.username());
+    }
+
+    void clear() {
+        users = new Map<String, UserData>() {
+            @Override
+            public int size() {
+                return 0;
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return false;
+            }
+
+            @Override
+            public boolean containsKey(Object key) {
+                return false;
+            }
+
+            @Override
+            public boolean containsValue(Object value) {
+                return false;
+            }
+
+            @Override
+            public UserData get(Object key) {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public UserData put(String key, UserData value) {
+                return null;
+            }
+
+            @Override
+            public UserData remove(Object key) {
+                return null;
+            }
+
+            @Override
+            public void putAll(@NotNull Map<? extends String, ? extends UserData> m) {
+
+            }
+
+            @Override
+            public void clear() {
+
+            }
+
+            @NotNull
+            @Override
+            public Set<String> keySet() {
+                return Set.of();
+            }
+
+            @NotNull
+            @Override
+            public Collection<UserData> values() {
+                return List.of();
+            }
+
+            @NotNull
+            @Override
+            public Set<Entry<String, UserData>> entrySet() {
+                return Set.of();
+            }
+        };
+    }
 }
