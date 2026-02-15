@@ -1,0 +1,5 @@
+package handlers;
+
+class ClearApplicationHandler {
+
+}

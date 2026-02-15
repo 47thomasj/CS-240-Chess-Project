@@ -1,15 +1,19 @@
 package server;
 
+import handlers.RegisterHandler;
 import io.javalin.*;
+
 
 public class Server {
 
     private final Javalin javalin;
+    private RegisterHandler registrationHandler;
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
-        // Register your endpoints and exception handlers here.
+        javalin.post("/user", context ->
+                registrationHandler.handle(context));
 
     }
 
@@ -21,4 +25,5 @@ public class Server {
     public void stop() {
         javalin.stop();
     }
+
 }
