@@ -11,9 +11,9 @@ import java.util.Set;
 
 public class UserDAO {
 
-    private Map<String, UserData> users;
+    private Map<String, UserData> userTable;
     private UserDAO() {
-        users = new Map<String, UserData>() {
+        userTable = new Map<String, UserData>() {
             @Override
             public int size() {
                 return 0;
@@ -81,25 +81,25 @@ public class UserDAO {
     }
 
     void createUser(UserData data) throws DataAccessException {
-        if (users.containsKey(data.username())) throw new DataAccessException("Error: username already taken");
-        users.put(data.username(), data);
+        if (userTable.containsKey(data.username())) throw new DataAccessException("Error: username already taken");
+        userTable.put(data.username(), data);
     }
 
     UserData readUser(UserData data) throws DataAccessException {
-        if (!users.containsKey(data.username())) throw new DataAccessException("Error: invalid username");
-        return users.get(data.username());
+        if (!userTable.containsKey(data.username())) throw new DataAccessException("Error: invalid username");
+        return userTable.get(data.username());
     }
     void updateUser(UserData data) throws DataAccessException {
-        if (!users.containsKey(data.username())) throw new DataAccessException("Error: invalid username");
-        users.replace(data.username(), data);
+        if (!userTable.containsKey(data.username())) throw new DataAccessException("Error: invalid username");
+        userTable.replace(data.username(), data);
     }
     void deleteUser(UserData data) throws DataAccessException {
-        if (!users.containsKey(data.username())) throw new DataAccessException("Error: invalid username");
-        users.remove(data.username());
+        if (!userTable.containsKey(data.username())) throw new DataAccessException("Error: invalid username");
+        userTable.remove(data.username());
     }
 
     void clear() {
-        users = new Map<String, UserData>() {
+        userTable = new Map<String, UserData>() {
             @Override
             public int size() {
                 return 0;
