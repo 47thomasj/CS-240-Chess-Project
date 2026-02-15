@@ -1,5 +1,3 @@
 package models.results;
 
-public class LogoutResult {
-    
-}
+public record LogoutResult(boolean success) {}

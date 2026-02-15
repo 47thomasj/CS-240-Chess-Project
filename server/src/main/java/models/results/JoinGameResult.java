@@ -1,5 +1,3 @@
 package models.results;
 
-public class JoinGameResult {
-    
-}
+public record JoinGameResult(boolean success) {}

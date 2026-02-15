@@ -1,5 +1,3 @@
 package models.results;
 
-public class LoginResult {
-    
-}
+public record LoginResult(String username, String authToken) {}

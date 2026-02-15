@@ -1,5 +1,5 @@
 package models.results;
 
-public class ListGamesResult {
-    
-}
+import model.GameData;
+
+public record ListGamesResult(GameData[] games) {}
