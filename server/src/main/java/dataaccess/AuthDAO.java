@@ -23,9 +23,9 @@ public class AuthDAO {
         authTable.replace(data.authToken(), data);
     }
 
-    public void deleteAuth(AuthData data) throws DataAccessException {
-        if (!authTable.containsKey(data.authToken())) throw new DataAccessException("Error: unauthorized");
-        authTable.remove(data.authToken());
+    public void deleteAuth(String authToken) throws DataAccessException {
+        if (!authTable.containsKey(authToken)) throw new DataAccessException("Error: unauthorized");
+        authTable.remove(authToken);
     }
 
     public void clear() {
