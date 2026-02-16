@@ -18,9 +18,9 @@ public class GameDAO {
         gameIDs.add(data.gameID());
     }
 
-    public GameData readGame(GameData data) throws DataAccessException {
-        if (!gameTable.containsKey(data.gameID())) throw new DataAccessException("Error: invalid game id");
-        return gameTable.get(data.gameID());
+    public GameData readGame(int gameID) throws DataAccessException {
+        if (!gameTable.containsKey(gameID)) throw new DataAccessException("Error: bad request");
+        return gameTable.get(gameID);
     }
 
     public void updateGame(GameData data) throws DataAccessException {

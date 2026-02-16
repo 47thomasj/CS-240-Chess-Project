@@ -4,13 +4,17 @@ import chess.ChessGame;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
+import model.AuthData;
 import model.GameData;
 import models.requests.CreateGameRequest;
+import models.requests.JoinGameRequest;
 import models.requests.ListGamesRequest;
 import models.results.CreateGameResult;
+import models.results.JoinGameResult;
 import models.results.ListGamesResult;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 public class GameService {
     private final AuthDAO authDAO;
@@ -34,5 +38,24 @@ public class GameService {
         GameData gameData = new GameData(gameId, "", "", request.gameName(), new ChessGame());
         gameDAO.createGame(gameData);
         return new CreateGameResult(gameId);
+    }
+
+    JoinGameResult joinGame(JoinGameRequest request) throws DataAccessException {
+        AuthData authData = authDAO.readAuth(request.authToken());
+        GameData game = gameDAO.readGame(request.gameID());
+
+        String gamePlayerColor = Objects.equals(request.playerColor(), "WHITE") ? game.whiteUsername() : game.blackUsername();
+        String otherPlayerColor = Objects.equals(request.playerColor(), "WHITE") ? game.blackUsername() : game.whiteUsername();
+        if (!Objects.equals(gamePlayerColor, "")) {
+            throw new DataAccessException("Error: already taken");
+        }
+
+        String whiteUsername = Objects.equals(request.playerColor(), "WHITE") ? authData.username() : game.whiteUsername();
+        String blackUsername = Objects.equals(request.playerColor(), "BLACK") ? authData.username() : game.blackUsername();
+        GameData updatedGame = new GameData(request.gameID(), whiteUsername, blackUsername, game.gameName(), game.game());
+
+        gameDAO.updateGame(updatedGame);
+
+        return new JoinGameResult(true);
     }
 }
