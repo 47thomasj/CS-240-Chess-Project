@@ -25,9 +25,9 @@ public class ListGamesHandler implements Handler {
         try {
             ListGamesResult result = service.listGames(request);
             context.status(200);
-            context.json(result);
+            context.json(gson.toJson(result));
         } catch (DataAccessException e) {
-            context.json(e);
+            context.json(gson.toJson(e));
             if (e.getMessage().equals("Error: unauthorized")) {
                 context.status(401);
             } else {

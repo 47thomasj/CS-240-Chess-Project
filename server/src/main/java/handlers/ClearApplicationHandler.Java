@@ -1,11 +1,9 @@
 package handlers;
 
 import com.google.gson.Gson;
-import dataaccess.DataAccessException;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import models.requests.ClearAllRequest;
-import models.results.ClearAllResult;
 import org.jetbrains.annotations.NotNull;
 import service.ClearApplicationService;
 
@@ -23,10 +21,10 @@ public class ClearApplicationHandler implements Handler {
         ClearAllRequest request = gson.fromJson(context.body(), ClearAllRequest.class);
 
         try {
-            ClearAllResult result = service.clear(request);
+            service.clear(request);
             context.status(200);
         } catch (Exception e) {
-            context.json(e);
+            context.json(gson.toJson(e));
             context.status(500);
         }
     }

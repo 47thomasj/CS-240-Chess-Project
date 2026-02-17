@@ -26,12 +26,13 @@ public class LoginHandler implements Handler {
         try {
             LoginResult result = service.login(request);
             context.status(200);
-            context.json(result);
+            context.json(gson.toJson(result));
         } catch (DataAccessException e) {
-            context.json(e);
+            context.json(gson.toJson(e));
             switch (e.getMessage()) {
                 case "Error: bad request" -> context.status(400);
                 case "Error: unauthorized" -> context.status(401);
+                case "Error: incorrect password" -> context.status(403);
                 default -> context.status(500);
             }
         }

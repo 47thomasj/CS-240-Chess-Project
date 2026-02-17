@@ -5,7 +5,6 @@ import dataaccess.DataAccessException;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import models.requests.LogoutRequest;
-import models.results.LogoutResult;
 import org.jetbrains.annotations.NotNull;
 import service.UserService;
 
@@ -24,10 +23,10 @@ public class LogoutHandler implements Handler {
         LogoutRequest request = gson.fromJson(context.body(), LogoutRequest.class);
 
         try {
-            LogoutResult result = service.logout(request);
+            service.logout(request);
             context.status(200);
         } catch (DataAccessException e) {
-            context.json(e);
+            context.json(gson.toJson(e));
             if (e.getMessage().equals("Error: unauthorized")) {
                 context.status(401);
             } else {
