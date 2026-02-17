@@ -42,10 +42,12 @@ public class GameService {
 
     public JoinGameResult joinGame(JoinGameRequest request) throws DataAccessException {
         AuthData authData = authDAO.readAuth(request.authToken());
-        GameData game = gameDAO.readGame(request.gameID());
 
         boolean isBadColor = request.playerColor() == null || !(request.playerColor().equals("WHITE") || request.playerColor().equals("BLACK"));
-        if (isBadColor) throw new DataAccessException("Error: bad request");
+        boolean isBadGameID = request.gameID() == null || request.gameID() <= 0;
+        if (isBadColor || isBadGameID) throw new DataAccessException("Error: bad request");
+
+        GameData game = gameDAO.readGame(request.gameID());
 
         String gamePlayerColor = Objects.equals(request.playerColor(), "WHITE") ? game.whiteUsername() : game.blackUsername();
         if (!Objects.equals(gamePlayerColor, null)) {
