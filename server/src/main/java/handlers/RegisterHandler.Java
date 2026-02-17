@@ -21,10 +21,8 @@ public class RegisterHandler implements Handler {
     }
 
     @Override
-    public void handle(@NotNull Context context) throws Exception {
-        String body = context.body();
-
-        RegisterRequest request = gson.fromJson(body, RegisterRequest.class);
+    public void handle(@NotNull Context context) {
+        RegisterRequest request = gson.fromJson(context.body(), RegisterRequest.class);
 
         try {
             RegisterResult result = service.register(request);
