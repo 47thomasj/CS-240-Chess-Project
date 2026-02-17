@@ -9,11 +9,11 @@ import models.results.ClearAllResult;
 import org.jetbrains.annotations.NotNull;
 import service.ClearApplicationService;
 
-class ClearApplicationHandler implements Handler {
+public class ClearApplicationHandler implements Handler {
     private final Gson gson;
     private final ClearApplicationService service;
 
-    ClearApplicationHandler(Gson gson, ClearApplicationService service) {
+    public ClearApplicationHandler(Gson gson, ClearApplicationService service) {
         this.gson = gson;
         this.service = service;
     }

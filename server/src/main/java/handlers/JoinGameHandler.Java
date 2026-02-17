@@ -9,7 +9,7 @@ import models.results.JoinGameResult;
 import org.jetbrains.annotations.NotNull;
 import service.GameService;
 
-class JoinGameHandler implements Handler {
+public class JoinGameHandler implements Handler {
     private final Gson gson;
     private final GameService service;
 

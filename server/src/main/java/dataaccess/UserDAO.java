@@ -7,7 +7,7 @@ import java.util.*;
 public class UserDAO {
 
     private HashMap<String, UserData> userTable;
-    private UserDAO() {
+    public UserDAO() {
         userTable = new HashMap<String, UserData>();
     }
 
