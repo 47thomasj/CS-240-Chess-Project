@@ -44,6 +44,9 @@ public class GameService {
         AuthData authData = authDAO.readAuth(request.authToken());
         GameData game = gameDAO.readGame(request.gameID());
 
+        boolean isBadColor = request.playerColor() == null || !(request.playerColor().equals("WHITE") || request.playerColor().equals("BLACK"));
+        if (isBadColor) throw new DataAccessException("Error: bad request");
+
         String gamePlayerColor = Objects.equals(request.playerColor(), "WHITE") ? game.whiteUsername() : game.blackUsername();
         if (!Objects.equals(gamePlayerColor, null)) {
             throw new DataAccessException("Error: already taken");
