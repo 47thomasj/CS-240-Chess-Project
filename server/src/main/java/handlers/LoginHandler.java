@@ -5,6 +5,7 @@ import dataaccess.DataAccessException;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import models.requests.LoginRequest;
+import models.results.ErrorResult;
 import models.results.LoginResult;
 import org.jetbrains.annotations.NotNull;
 import service.UserService;
@@ -28,7 +29,7 @@ public class LoginHandler implements Handler {
             context.status(200);
             context.json(gson.toJson(result));
         } catch (DataAccessException e) {
-            context.json(gson.toJson(e));
+            context.json(gson.toJson(new ErrorResult(e.getMessage())));
             switch (e.getMessage()) {
                 case "Error: bad request" -> context.status(400);
                 case "Error: unauthorized" -> context.status(401);

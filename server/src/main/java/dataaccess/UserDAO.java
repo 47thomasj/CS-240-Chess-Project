@@ -17,15 +17,15 @@ public class UserDAO {
     }
 
     public UserData readUser(String username) throws DataAccessException {
-        if (!userTable.containsKey(username)) throw new DataAccessException("Error: invalid username");
+        if (!userTable.containsKey(username)) throw new DataAccessException("Error: bad request");
         return userTable.get(username);
     }
     public void updateUser(UserData data) throws DataAccessException {
-        if (!userTable.containsKey(data.username())) throw new DataAccessException("Error: invalid username");
+        if (!userTable.containsKey(data.username())) throw new DataAccessException("Error: bad request");
         userTable.replace(data.username(), data);
     }
     public void deleteUser(UserData data) throws DataAccessException {
-        if (!userTable.containsKey(data.username())) throw new DataAccessException("Error: invalid username");
+        if (!userTable.containsKey(data.username())) throw new DataAccessException("Error: bad request");
         userTable.remove(data.username());
     }
 

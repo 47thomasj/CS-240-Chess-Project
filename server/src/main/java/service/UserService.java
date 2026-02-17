@@ -38,7 +38,7 @@ public class UserService {
     public LoginResult login(LoginRequest loginRequest) throws DataAccessException {
         UserData userData = userDAO.readUser(loginRequest.username());
         if (!Objects.equals(userData.password(), loginRequest.password())) {
-            throw new DataAccessException("Error: incorrect password");
+            throw new DataAccessException("Error: bad request");
         }
 
         Authtoken token = new Authtoken();

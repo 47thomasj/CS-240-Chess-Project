@@ -5,6 +5,7 @@ import dataaccess.DataAccessException;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import models.requests.ListGamesRequest;
+import models.results.ErrorResult;
 import models.results.ListGamesResult;
 import org.jetbrains.annotations.NotNull;
 import service.GameService;
@@ -27,7 +28,7 @@ public class ListGamesHandler implements Handler {
             context.status(200);
             context.json(gson.toJson(result));
         } catch (DataAccessException e) {
-            context.json(gson.toJson(e));
+            context.json(gson.toJson(new ErrorResult(e.getMessage())));
             if (e.getMessage().equals("Error: unauthorized")) {
                 context.status(401);
             } else {
