@@ -23,14 +23,14 @@ public class GameService {
         this.gameDAO = gameDAO;
     }
 
-    ListGamesResult listGames(ListGamesRequest request) throws DataAccessException {
+    public ListGamesResult listGames(ListGamesRequest request) throws DataAccessException {
         authDAO.readAuth(request.authToken());
 
         GameData[] gamesList = gameDAO.listGames();
         return new ListGamesResult(gamesList);
     }
 
-    CreateGameResult createGame(CreateGameRequest request) throws DataAccessException {
+    public CreateGameResult createGame(CreateGameRequest request) throws DataAccessException {
         authDAO.readAuth(request.authToken());
 
         int gameId = gameDAO.getHighestGameID() + 1;
@@ -39,7 +39,7 @@ public class GameService {
         return new CreateGameResult(gameId);
     }
 
-    JoinGameResult joinGame(JoinGameRequest request) throws DataAccessException {
+    public JoinGameResult joinGame(JoinGameRequest request) throws DataAccessException {
         AuthData authData = authDAO.readAuth(request.authToken());
         GameData game = gameDAO.readGame(request.gameID());
 
