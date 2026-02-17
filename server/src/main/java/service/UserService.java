@@ -11,6 +11,7 @@ import models.requests.LoginRequest;
 import models.requests.LogoutRequest;
 import models.requests.RegisterRequest;
 import models.results.LoginResult;
+import models.results.LogoutResult;
 import models.results.RegisterResult;
 
 import java.util.Objects;
@@ -47,7 +48,9 @@ public class UserService {
         return new LoginResult(loginRequest.username(), token.getAuthToken());
     }
 
-    public void logout(LogoutRequest logoutRequest) throws DataAccessException {
+    public LogoutResult logout(LogoutRequest logoutRequest) throws DataAccessException {
         authDAO.deleteAuth(logoutRequest.authToken());
+
+        return new LogoutResult(true);
     }
 }
