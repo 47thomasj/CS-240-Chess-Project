@@ -1,5 +1,38 @@
 package handlers;
 
-public class CreateGamesHandler {
-    
+import com.google.gson.Gson;
+import io.javalin.http.Context;
+import io.javalin.http.Handler;
+import models.requests.CreateGameRequest;
+import models.results.CreateGameResult;
+import dataaccess.DataAccessException;
+import org.jetbrains.annotations.NotNull;
+import service.GameService;
+
+public class CreateGamesHandler implements Handler {
+    private final Gson gson;
+    private final GameService service;
+
+    public CreateGamesHandler(Gson gson, GameService service) {
+        this.gson = gson;
+        this.service = service;
+    }
+
+    @Override
+    public void handle(@NotNull Context context) {
+        CreateGameRequest request = gson.fromJson(context.body(), CreateGameRequest.class);
+
+        try {
+            CreateGameResult result = service.createGame(request);
+            context.status(200);
+            context.json(result);
+        } catch (DataAccessException e) {
+            context.json(e);
+            switch (e.getMessage()) {
+                case "Error: bad request" -> context.status(400);
+                case "Error: unauthorized" -> context.status(401);
+                default -> context.status(500);
+            }
+        }
+    }
 }
