@@ -36,9 +36,15 @@ public class UserService {
     }
 
     public LoginResult login(LoginRequest loginRequest) throws DataAccessException {
+        boolean usernameNull = loginRequest.username() == null;
+        boolean passwordNull = loginRequest.password() == null;
+        if (usernameNull || passwordNull) {
+            throw new DataAccessException("Error: bad request");
+        } 
+        
         UserData userData = userDAO.readUser(loginRequest.username());
         if (!Objects.equals(userData.password(), loginRequest.password())) {
-            throw new DataAccessException("Error: bad request");
+            throw new DataAccessException("Error: unauthorized");
         }
 
         Authtoken token = new Authtoken();
