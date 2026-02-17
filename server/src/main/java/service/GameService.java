@@ -32,9 +32,10 @@ public class GameService {
 
     public CreateGameResult createGame(CreateGameRequest request) throws DataAccessException {
         authDAO.readAuth(request.authToken());
+        if (request.gameName() == null) throw new DataAccessException("Error: bad request");
 
         int gameId = gameDAO.getHighestGameID() + 1;
-        GameData gameData = new GameData(gameId, "", "", request.gameName(), new ChessGame());
+        GameData gameData = new GameData(gameId, null, null, request.gameName(), new ChessGame());
         gameDAO.createGame(gameData);
         return new CreateGameResult(gameId);
     }
@@ -44,7 +45,7 @@ public class GameService {
         GameData game = gameDAO.readGame(request.gameID());
 
         String gamePlayerColor = Objects.equals(request.playerColor(), "WHITE") ? game.whiteUsername() : game.blackUsername();
-        if (!Objects.equals(gamePlayerColor, "")) {
+        if (!Objects.equals(gamePlayerColor, null)) {
             throw new DataAccessException("Error: already taken");
         }
 

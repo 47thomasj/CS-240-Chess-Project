@@ -21,7 +21,8 @@ public class JoinGameHandler implements Handler {
 
     @Override
     public void handle(@NotNull Context context) {
-        JoinGameRequest request = gson.fromJson(context.body(), JoinGameRequest.class);
+        JoinGameRequest requestBody = gson.fromJson(context.body(), JoinGameRequest.class);
+        JoinGameRequest request = new JoinGameRequest(context.header("authorization"), requestBody.playerColor(), requestBody.gameID());
 
         try {
             JoinGameResult result = service.joinGame(request);

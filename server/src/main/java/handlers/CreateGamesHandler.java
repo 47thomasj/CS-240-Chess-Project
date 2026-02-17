@@ -21,7 +21,8 @@ public class CreateGamesHandler implements Handler {
 
     @Override
     public void handle(@NotNull Context context) {
-        CreateGameRequest request = gson.fromJson(context.body(), CreateGameRequest.class);
+        CreateGameRequest requestBody = gson.fromJson(context.body(), CreateGameRequest.class);
+        CreateGameRequest request = new CreateGameRequest(context.header("authorization"), requestBody.gameName());
 
         try {
             CreateGameResult result = service.createGame(request);
