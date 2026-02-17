@@ -13,7 +13,6 @@ import models.results.CreateGameResult;
 import models.results.JoinGameResult;
 import models.results.ListGamesResult;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 public class GameService {
@@ -45,7 +44,6 @@ public class GameService {
         GameData game = gameDAO.readGame(request.gameID());
 
         String gamePlayerColor = Objects.equals(request.playerColor(), "WHITE") ? game.whiteUsername() : game.blackUsername();
-        String otherPlayerColor = Objects.equals(request.playerColor(), "WHITE") ? game.blackUsername() : game.whiteUsername();
         if (!Objects.equals(gamePlayerColor, "")) {
             throw new DataAccessException("Error: already taken");
         }

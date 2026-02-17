@@ -1,15 +1,43 @@
 package handlers;
 
+import com.google.gson.Gson;
+import dataaccess.DataAccessException;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
+import models.requests.RegisterRequest;
+import models.results.RegisterResult;
 import org.jetbrains.annotations.NotNull;
+import service.UserService;
+
 
 public class RegisterHandler implements Handler {
 
+    private final Gson gson;
+    private final UserService service;
+
+    public RegisterHandler(Gson gson, UserService service) {
+        this.gson = gson;
+        this.service = service;
+    }
+
     @Override
     public void handle(@NotNull Context context) throws Exception {
-        RegistrationRequest request = (RegistrationRequest)gson.fromJson(context.body(), RegistrationRequest.class);
         String body = context.body();
+
+        RegisterRequest request = gson.fromJson(body, RegisterRequest.class);
+
+        try {
+            RegisterResult result = service.register(request);
+            context.status(200);
+            context.json(result);
+        } catch (DataAccessException e) {
+            context.json(e);
+            switch (e.getMessage()) {
+                case "Error: bad request" -> context.status(400);
+                case "Error: already taken" -> context.status(403);
+                default -> context.status(500);
+            }
+        }
     }
 
 }
