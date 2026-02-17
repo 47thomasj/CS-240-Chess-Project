@@ -21,7 +21,8 @@ public class ListGamesHandler implements Handler {
 
     @Override
     public void handle(@NotNull Context context) {
-        ListGamesRequest request = gson.fromJson(context.body(), ListGamesRequest.class);
+        String authToken = context.header("authorization");
+        ListGamesRequest request = new ListGamesRequest(authToken);
 
         try {
             ListGamesResult result = service.listGames(request);

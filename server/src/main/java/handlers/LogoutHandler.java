@@ -21,7 +21,7 @@ public class LogoutHandler implements Handler {
 
     @Override
     public void handle(@NotNull Context context) {
-        LogoutRequest request = gson.fromJson(context.body(), LogoutRequest.class);
+        LogoutRequest request = new LogoutRequest(context.header("authorization"));
 
         try {
             service.logout(request);

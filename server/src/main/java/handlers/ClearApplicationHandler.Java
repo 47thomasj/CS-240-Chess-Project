@@ -3,7 +3,6 @@ package handlers;
 import com.google.gson.Gson;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
-import models.requests.ClearAllRequest;
 import models.results.ErrorResult;
 import org.jetbrains.annotations.NotNull;
 import service.ClearApplicationService;
@@ -19,10 +18,8 @@ public class ClearApplicationHandler implements Handler {
 
     @Override
     public void handle(@NotNull Context context) {
-        ClearAllRequest request = gson.fromJson(context.body(), ClearAllRequest.class);
-
         try {
-            service.clear(request);
+            service.clear();
             context.status(200);
         } catch (Exception e) {
             context.json(gson.toJson(new ErrorResult(e.getMessage())));
