@@ -20,7 +20,6 @@ public class GameServiceTests {
     private static AuthDAO authDAO;
 
     private static TestUser testUser;
-    private static TestUser badUser;
 
     private static GameService gameService;
     private static UserService userService;
@@ -36,7 +35,6 @@ public class GameServiceTests {
         userService = new UserService(userDAO, authDAO);
 
         testUser = new TestUser("testUser", "testPass", "test@mail.com");
-        badUser = new TestUser("badUser", "badPass", "bad@mail.com");
 
         try {
             userService.register(new RegisterRequest(testUser.getUsername(), testUser.getPassword(), testUser.getEmail()));
