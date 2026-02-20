@@ -14,17 +14,16 @@ public class AuthDAO {
     }
 
     public AuthData readAuth(String authToken) throws DataAccessException {
-        if (!authTable.containsKey(authToken)) throw new DataAccessException("Error: unauthorized");
+        if (!authTable.containsKey(authToken)) {
+            throw new DataAccessException("Error: unauthorized");
+        }
         return authTable.get(authToken);
     }
 
-    public void updateAuth(AuthData data) throws DataAccessException {
-        if (!authTable.containsKey(data.authToken())) throw new DataAccessException("Error: unauthorized");
-        authTable.replace(data.authToken(), data);
-    }
-
     public void deleteAuth(String authToken) throws DataAccessException {
-        if (!authTable.containsKey(authToken)) throw new DataAccessException("Error: unauthorized");
+        if (!authTable.containsKey(authToken)) {
+            throw new DataAccessException("Error: unauthorized");
+        }
         authTable.remove(authToken);
     }
 

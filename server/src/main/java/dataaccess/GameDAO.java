@@ -13,25 +13,25 @@ public class GameDAO {
     }
 
     public void createGame(GameData data) throws DataAccessException {
-        if (gameTable.containsKey(data.gameID())) throw new DataAccessException("Error: game id already taken");
+        if (gameTable.containsKey(data.gameID())) {
+            throw new DataAccessException("Error: game id already taken");
+        }
         gameTable.put(data.gameID(), data);
         gameIDs.add(data.gameID());
     }
 
     public GameData readGame(int gameID) throws DataAccessException {
-        if (!gameTable.containsKey(gameID)) throw new DataAccessException("Error: bad request");
+        if (!gameTable.containsKey(gameID)) {
+            throw new DataAccessException("Error: bad request");
+        }
         return gameTable.get(gameID);
     }
 
     public void updateGame(GameData data) throws DataAccessException {
-        if (!gameTable.containsKey(data.gameID())) throw new DataAccessException("Error: invalid game id");
+        if (!gameTable.containsKey(data.gameID())) {
+            throw new DataAccessException("Error: invalid game id");
+        }
         gameTable.replace(data.gameID(), data);
-    }
-
-    public void deleteGame(GameData data) throws DataAccessException {
-        if (!gameTable.containsKey(data.gameID())) throw new DataAccessException("Error: invalid game id");
-        gameTable.remove(data.gameID());
-        gameIDs.remove(data.gameID());
     }
 
     public GameData[] listGames() {

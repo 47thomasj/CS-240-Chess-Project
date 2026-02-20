@@ -32,7 +32,9 @@ public class GameService {
 
     public CreateGameResult createGame(CreateGameRequest request) throws DataAccessException {
         authDAO.readAuth(request.authToken());
-        if (request.gameName() == null) throw new DataAccessException("Error: bad request");
+        if (request.gameName() == null) {
+            throw new DataAccessException("Error: bad request");
+        }
 
         int gameId = gameDAO.getHighestGameID() + 1;
         GameData gameData = new GameData(gameId, null, null, request.gameName(), new ChessGame());
@@ -45,7 +47,9 @@ public class GameService {
 
         boolean isBadColor = request.playerColor() == null || !(request.playerColor().equals("WHITE") || request.playerColor().equals("BLACK"));
         boolean isBadGameID = request.gameID() == null || request.gameID() <= 0;
-        if (isBadColor || isBadGameID) throw new DataAccessException("Error: bad request");
+        if (isBadColor || isBadGameID) {
+            throw new DataAccessException("Error: bad request");
+        }
 
         GameData game = gameDAO.readGame(request.gameID());
 

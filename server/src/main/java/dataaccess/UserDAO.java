@@ -20,14 +20,6 @@ public class UserDAO {
         if (!userTable.containsKey(username)) throw new DataAccessException("Error: unauthorized");
         return userTable.get(username);
     }
-    public void updateUser(UserData data) throws DataAccessException {
-        if (!userTable.containsKey(data.username())) throw new DataAccessException("Error: unauthorized");
-        userTable.replace(data.username(), data);
-    }
-    public void deleteUser(UserData data) throws DataAccessException {
-        if (!userTable.containsKey(data.username())) throw new DataAccessException("Error: unauthorized");
-        userTable.remove(data.username());
-    }
 
     public void clear() {
         userTable = new HashMap<String, UserData>();
