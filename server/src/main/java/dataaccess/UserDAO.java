@@ -12,12 +12,16 @@ public class UserDAO {
     }
 
     public void createUser(UserData data) throws DataAccessException {
-        if (userTable.containsKey(data.username())) throw new DataAccessException("Error: already taken");
+        if (userTable.containsKey(data.username())) {
+            throw new DataAccessException("Error: already taken");
+        }
         userTable.put(data.username(), data);
     }
 
     public UserData readUser(String username) throws DataAccessException {
-        if (!userTable.containsKey(username)) throw new DataAccessException("Error: unauthorized");
+        if (!userTable.containsKey(username)) {
+            throw new DataAccessException("Error: unauthorized");
+        }
         return userTable.get(username);
     }
 
