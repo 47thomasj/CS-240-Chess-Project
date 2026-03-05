@@ -89,11 +89,13 @@ public class UserDAOTests {
 
     @Test
     @Order(7)
-    @DisplayName("Test that an exception is thrown when a user is read that does not exist")
+    @DisplayName("Test that DAO returns null when a user is read that does not exist")
     public void readNonExistentUser() {
-        Assertions.assertThrows(
-            DataAccessException.class,
-            () -> userDAO.readUser("nonExistentUser")
-        );
+        try {
+            UserData result = userDAO.readUser("nonExistentUser");
+            Assertions.assertNull(result, "readUser should return null when a user does not exist");
+        } catch (DataAccessException ex) {
+            Assertions.fail("readUser should not throw an exception when a user does not exist");
+        }
     }
 }
