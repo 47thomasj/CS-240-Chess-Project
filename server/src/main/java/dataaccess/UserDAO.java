@@ -2,7 +2,6 @@ package dataaccess;
 
 import model.UserData;
 
-import java.sql.Connection;
 import java.sql.*;
 
 public class UserDAO {
