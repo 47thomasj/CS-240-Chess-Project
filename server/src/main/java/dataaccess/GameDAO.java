@@ -13,7 +13,7 @@ public class GameDAO {
     public GameDAO() {
         gson = new Gson();
         try {
-            configureDatabase();
+            DatabaseManager.configureDatabase(createStatements);
         } catch (DataAccessException ex) {
             System.out.println(ex.getMessage());
         }
@@ -118,19 +118,6 @@ public class GameDAO {
         )
         """
     };
-
-    private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (Connection conn = DatabaseManager.getConnection()) {
-            for (String statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException ex) {
-            throw new DataAccessException(String.format("Error: unable to configure database: %s", ex.getMessage()));
-        }
-    }
 
     private GameData readGame(ResultSet rs) throws DataAccessException {
         try {

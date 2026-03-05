@@ -9,7 +9,7 @@ public class UserDAO {
 
     public UserDAO() {
         try {
-            configureDatabase();
+            DatabaseManager.configureDatabase(createStatements);
         } catch (DataAccessException ex) {
             System.out.println(ex.getMessage());
         }
@@ -69,19 +69,6 @@ public class UserDAO {
         )
         """
     };
-
-    private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (Connection conn = DatabaseManager.getConnection()) {
-            for (String statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException ex) {
-            throw new DataAccessException(String.format("Error: unable to configure database: %s", ex.getMessage()));
-        }
-    }
 
     private UserData readUser(ResultSet rs) throws DataAccessException {
         try {
