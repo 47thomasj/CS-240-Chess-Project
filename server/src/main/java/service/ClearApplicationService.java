@@ -3,6 +3,7 @@ package service;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
+import dataaccess.DataAccessException;
 
 public class ClearApplicationService {
     private final AuthDAO authDAO;
@@ -15,8 +16,12 @@ public class ClearApplicationService {
     }
 
     public void clear() {
-        authDAO.clear();
-        gameDAO.clear();
-        userDAO.clear();
+        try {
+            authDAO.clear();
+            gameDAO.clear();
+            userDAO.clear();
+        } catch (DataAccessException ex) {
+            System.out.println(ex.getMessage());
+        }
     }
 }

@@ -7,8 +7,12 @@ import java.sql.*;
 
 public class UserDAO {
 
-    public UserDAO() throws DataAccessException {
-        configureDatabase();
+    public UserDAO() {
+        try {
+            configureDatabase();
+        } catch (DataAccessException ex) {
+            System.out.println(ex.getMessage());
+        }
     }
 
     public void createUser(UserData data) throws DataAccessException {

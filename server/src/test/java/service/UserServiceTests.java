@@ -30,8 +30,12 @@ public class UserServiceTests {
 
     @BeforeEach
     public void setup() {
-        userDAO.clear();
-        authDAO.clear();
+        try {
+            authDAO.clear();
+            userDAO.clear();
+        } catch (DataAccessException ex) {
+            System.out.println(ex.getMessage());
+        }
     }
 
     @Test
