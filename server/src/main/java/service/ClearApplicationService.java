@@ -15,13 +15,9 @@ public class ClearApplicationService {
         this.userDAO = userDAO;
     }
 
-    public void clear() {
-        try {
-            authDAO.clear();
-            gameDAO.clear();
-            userDAO.clear();
-        } catch (DataAccessException ex) {
-            System.out.println(ex.getMessage());
-        }
+    public void clear() throws DataAccessException {
+        authDAO.clear();
+        gameDAO.clear();
+        userDAO.clear();
     }
 }

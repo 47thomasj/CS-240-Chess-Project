@@ -22,7 +22,7 @@ public class AuthDAO {
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException ex) {
-            throw new DataAccessException(String.format("Unable to create auth: %s", ex.getMessage()));
+            throw new DataAccessException(String.format("Error: unable to create auth: %s", ex.getMessage()));
         }
     }
 
@@ -40,7 +40,7 @@ public class AuthDAO {
                 }
             }
         } catch (SQLException ex) {
-            throw new DataAccessException(String.format("Unable to read auth: %s", ex.getMessage()));
+            throw new DataAccessException(String.format("Error: unable to read auth: %s", ex.getMessage()));
         }
     }
 
@@ -54,7 +54,7 @@ public class AuthDAO {
                     throw new DataAccessException("Error: unauthorized");
             }
         } catch (SQLException ex) {
-            throw new DataAccessException(String.format("Unable to delete auth: %s", ex.getMessage()));
+            throw new DataAccessException(String.format("Error: unable to delete auth: %s", ex.getMessage()));
         }
     }
 
@@ -65,7 +65,7 @@ public class AuthDAO {
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException ex) {
-            throw new DataAccessException(String.format("Unable to clear auth: %s", ex.getMessage()));
+            throw new DataAccessException(String.format("Error: unable to clear auth: %s", ex.getMessage()));
         }
     }
 
@@ -88,7 +88,7 @@ public class AuthDAO {
                 }
             }
         } catch (SQLException ex) {
-            throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()));
+            throw new DataAccessException(String.format("Error: unable to configure database: %s", ex.getMessage()));
         }
     }
 
@@ -96,7 +96,7 @@ public class AuthDAO {
         try {
             return new AuthData(rs.getString("authToken"), rs.getString("username"));
         } catch (SQLException ex) {
-            throw new DataAccessException(String.format("Unable to read auth: %s", ex.getMessage()));
+            throw new DataAccessException(String.format("Error: unable to read auth: %s", ex.getMessage()));
         }
     }
 }

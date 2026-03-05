@@ -36,7 +36,7 @@ public class GameDAO {
         } catch (SQLException ex) {
             if (ex.getErrorCode() == 1062)
                 throw new DataAccessException("Error: game id already taken");
-            throw new DataAccessException(String.format("Unable to create game: %s", ex.getMessage()));
+            throw new DataAccessException(String.format("Error: unable to create game: %s", ex.getMessage()));
         }
         return -1;
 
@@ -56,7 +56,7 @@ public class GameDAO {
                 }
             }
         } catch (SQLException ex) {
-            throw new DataAccessException(String.format("Unable to get game by game id: %s", ex.getMessage()));
+            throw new DataAccessException(String.format("Error: unable to get game by game id: %s", ex.getMessage()));
         }
     }
 
@@ -74,7 +74,7 @@ public class GameDAO {
                     throw new DataAccessException("Error: invalid game id");
             }
         } catch (SQLException ex) {
-            throw new DataAccessException(String.format("Unable to update game: %s", ex.getMessage()));
+            throw new DataAccessException(String.format("Error: unable to update game: %s", ex.getMessage()));
         }
     }
 
@@ -91,7 +91,7 @@ public class GameDAO {
                 }
             }
         } catch (SQLException ex) {
-            throw new DataAccessException(String.format("Unable to list games: %s", ex.getMessage()));
+            throw new DataAccessException(String.format("Error: unable to list games: %s", ex.getMessage()));
         }
     }
 
@@ -102,7 +102,7 @@ public class GameDAO {
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException ex) {
-            throw new DataAccessException(String.format("Unable to clear games: %s", ex.getMessage()));
+            throw new DataAccessException(String.format("Error: unable to clear games: %s", ex.getMessage()));
         }
     }
 
@@ -128,7 +128,7 @@ public class GameDAO {
                 }
             }
         } catch (SQLException ex) {
-            throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()));
+            throw new DataAccessException(String.format("Error: unable to configure database: %s", ex.getMessage()));
         }
     }
 
@@ -137,7 +137,7 @@ public class GameDAO {
             ChessGame game = gson.fromJson(rs.getString("game"), ChessGame.class);
             return new GameData(rs.getInt("gameID"), rs.getString("whiteUsername"), rs.getString("blackUsername"), rs.getString("gameName"), game);
         } catch (SQLException ex) {
-            throw new DataAccessException(String.format("Unable to read user: %s", ex.getMessage()));
+            throw new DataAccessException(String.format("Error: unable to read user: %s", ex.getMessage()));
         }
     }
 }
