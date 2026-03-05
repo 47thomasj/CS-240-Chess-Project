@@ -36,9 +36,11 @@ public class GameService {
             throw new DataAccessException("Error: bad request");
         }
 
-        int gameId = gameDAO.getHighestGameID() + 1;
-        GameData gameData = new GameData(gameId, null, null, request.gameName(), new ChessGame());
-        gameDAO.createGame(gameData);
+        GameData gameData = new GameData(0, null, null, request.gameName(), new ChessGame());
+        int gameId = gameDAO.createGame(gameData);
+        if (gameId == -1) {
+            throw new DataAccessException("Error: unable to create game");
+        }
         return new CreateGameResult(gameId);
     }
 

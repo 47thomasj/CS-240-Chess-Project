@@ -19,23 +19,26 @@ public class GameDAO {
         }
     }
 
-    public void createGame(GameData data) throws DataAccessException {
+    public int createGame(GameData data) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
-            var statement = "INSERT INTO games (gameID, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?)";
-            try (PreparedStatement preparedStatement = conn.prepareStatement(statement)) {
-                preparedStatement.setInt(1, data.gameID());
-                preparedStatement.setString(2, data.whiteUsername());
-                preparedStatement.setString(3, data.blackUsername());
-                preparedStatement.setString(4, data.gameName());
-                preparedStatement.setString(5, gson.toJson(data.game()));
+            var statement = "INSERT INTO games (whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?)";
+            try (PreparedStatement preparedStatement = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)) {
+                preparedStatement.setString(1, data.whiteUsername());
+                preparedStatement.setString(2, data.blackUsername());
+                preparedStatement.setString(3, data.gameName());
+                preparedStatement.setString(4, gson.toJson(data.game()));
                 preparedStatement.executeUpdate();
+                try (ResultSet keys = preparedStatement.getGeneratedKeys()) {
+                    if (keys.next())
+                        return keys.getInt(1);
+                }
             }
         } catch (SQLException ex) {
             if (ex.getErrorCode() == 1062)
                 throw new DataAccessException("Error: game id already taken");
             throw new DataAccessException(String.format("Unable to create game: %s", ex.getMessage()));
         }
-
+        return -1;
 
     }
 
