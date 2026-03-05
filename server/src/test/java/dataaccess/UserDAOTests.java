@@ -34,8 +34,8 @@ public class UserDAOTests {
             }
         }
         UserDAO freshDAO = new UserDAO();
-        UserData result = freshDAO.readUser(testUser.username());
-        Assertions.assertNull(result, "Table should be empty after initialization from scratch");
+        DataAccessException exception = Assertions.assertThrows(DataAccessException.class, () -> freshDAO.readUser(testUser.username()));
+        Assertions.assertEquals("Error: unauthorized", exception.getMessage());
     }
 
     @Test
@@ -83,8 +83,8 @@ public class UserDAOTests {
     public void clearDatabase() throws DataAccessException {
         userDAO.createUser(testUser);
         userDAO.clear();
-        UserData result = userDAO.readUser(testUser.username());
-        Assertions.assertNull(result, "User should not exist after clear");
+        DataAccessException exception = Assertions.assertThrows(DataAccessException.class, () -> userDAO.readUser(testUser.username()));
+        Assertions.assertEquals("Error: unauthorized", exception.getMessage());
     }
 
     @Test
@@ -100,13 +100,9 @@ public class UserDAOTests {
 
     @Test
     @Order(8)
-    @DisplayName("Test that DAO returns null when a user is read that does not exist")
+    @DisplayName("Test that DAO throws an exception when a user is read that does not exist")
     public void readNonExistentUser() {
-        try {
-            UserData result = userDAO.readUser("nonExistentUser");
-            Assertions.assertNull(result, "readUser should return null when a user does not exist");
-        } catch (DataAccessException ex) {
-            Assertions.fail("readUser should not throw an exception when a user does not exist");
-        }
+        DataAccessException exception = Assertions.assertThrows(DataAccessException.class, () -> userDAO.readUser("nonExistentUser"));
+        Assertions.assertEquals("Error: unauthorized", exception.getMessage());
     }
 }
