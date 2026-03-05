@@ -2,6 +2,7 @@ package dataaccess;
 
 import model.UserData;
 import org.junit.jupiter.api.*;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -68,6 +69,16 @@ public class UserDAOTests {
 
     @Test
     @Order(5)
+    @DisplayName("Test that a user's password is stored as a hash")
+    public void passwordIsHashed() throws DataAccessException {
+        userDAO.createUser(testUser);
+        UserData result = userDAO.readUser(testUser.username());
+        Assertions.assertNotEquals(testUser.password(), result.password(), "Password should not be stored raw");
+        Assertions.assertTrue(BCrypt.checkpw(testUser.password(), result.password()), "Stored password should be a valid BCrypt hash of the original");
+    }
+
+    @Test
+    @Order(6)
     @DisplayName("Test that the database can be cleared")
     public void clearDatabase() throws DataAccessException {
         userDAO.createUser(testUser);
@@ -77,7 +88,7 @@ public class UserDAOTests {
     }
 
     @Test
-    @Order(6)
+    @Order(7)
     @DisplayName("Test that an exception is thrown when a user is created with a duplicate username")
     public void createDuplicateUser() throws DataAccessException {
         userDAO.createUser(testUser);
@@ -88,7 +99,7 @@ public class UserDAOTests {
     }
 
     @Test
-    @Order(7)
+    @Order(8)
     @DisplayName("Test that DAO returns null when a user is read that does not exist")
     public void readNonExistentUser() {
         try {
