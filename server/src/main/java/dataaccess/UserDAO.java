@@ -3,7 +3,7 @@ package dataaccess;
 import model.UserData;
 
 import java.sql.Connection;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.*;
 
 public class UserDAO {
@@ -20,10 +20,20 @@ public class UserDAO {
     }
 
     public UserData readUser(String username) throws DataAccessException {
-        if (!userTable.containsKey(username)) {
-            throw new DataAccessException("Error: unauthorized");
+        try (Connection conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT username, password, email FROM users WHERE username=?";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                ps.setString(1, username);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return readUser(rs);
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException(String.format("Unable to get user by username: %s", ex.getMessage()));
         }
-        return userTable.get(username);
+        return null;
     }
 
     public void clear() {
@@ -51,6 +61,14 @@ public class UserDAO {
             }
         } catch (SQLException ex) {
             throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()));
+        }
+    }
+
+    private UserData readUser(ResultSet rs) throws DataAccessException {
+        try {
+            return new UserData(rs.getString("username"), rs.getString("password"), rs.getString("email"));
+        } catch (SQLException ex) {
+            throw new DataAccessException(String.format("Unable to read user: %s", ex.getMessage()));
         }
     }
 }
