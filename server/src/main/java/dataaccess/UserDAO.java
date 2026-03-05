@@ -4,7 +4,6 @@ import model.UserData;
 
 import java.sql.Connection;
 import java.sql.*;
-import java.util.*;
 
 public class UserDAO {
 
@@ -13,10 +12,17 @@ public class UserDAO {
     }
 
     public void createUser(UserData data) throws DataAccessException {
-        if (userTable.containsKey(data.username())) {
-            throw new DataAccessException("Error: already taken");
+        try (Connection conn = DatabaseManager.getConnection()) {
+            var statement = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                ps.setString(1, data.username());
+                ps.setString(2, data.password());
+                ps.setString(3, data.email());
+                ps.executeUpdate();
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException(String.format("Unable to create user: %s", ex.getMessage()));
         }
-        userTable.put(data.username(), data);
     }
 
     public UserData readUser(String username) throws DataAccessException {
@@ -36,8 +42,15 @@ public class UserDAO {
         return null;
     }
 
-    public void clear() {
-        userTable = new HashMap<String, UserData>();
+    public void clear() throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            var statement = "DELETE FROM users";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                ps.executeUpdate();
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException(String.format("Unable to clear users: %s", ex.getMessage()));
+        }
     }
 
     private final String[] createStatements = {
