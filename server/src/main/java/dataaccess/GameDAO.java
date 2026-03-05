@@ -113,7 +113,7 @@ public class GameDAO {
         `whiteUsername` VARCHAR(255) NOT NULL,
         `blackUsername` VARCHAR(255) NOT NULL,
         `gameName` VARCHAR(255) NOT NULL,
-        `game` VARCHAR(255) NOT NULL,
+        `game` BLOB NOT NULL,
         PRIMARY KEY (`gameID`)
         )
         """

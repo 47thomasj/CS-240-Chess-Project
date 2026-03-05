@@ -44,7 +44,7 @@ public class GameServiceTests {
     }
 
     @BeforeEach
-    public void setup() {
+    public void setup() throws DataAccessException {
         gameDAO.clear();
     }
 
