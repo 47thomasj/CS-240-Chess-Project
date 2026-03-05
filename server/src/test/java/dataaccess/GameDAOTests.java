@@ -18,7 +18,7 @@ public class GameDAOTests {
     @BeforeAll
     public static void init() {
         gameDAO = new GameDAO();
-        testGameData = new GameData(0, "white", "black", "testGame", new ChessGame());
+        testGameData = new GameData(0, null, null, "testGame", new ChessGame());
     }
 
     @BeforeEach
