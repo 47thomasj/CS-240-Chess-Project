@@ -14,7 +14,6 @@ import models.results.LoginResult;
 import models.results.LogoutResult;
 import models.results.RegisterResult;
 
-import java.util.Objects;
 import org.mindrot.jbcrypt.BCrypt;
 
 public class UserService {
@@ -46,13 +45,12 @@ public class UserService {
     public LoginResult login(LoginRequest loginRequest) throws DataAccessException {
         boolean usernameNull = loginRequest.username() == null;
         boolean passwordNull = loginRequest.password() == null;
-        String hashedPassword = BCrypt.hashpw(loginRequest.password(), BCrypt.gensalt());
         if (usernameNull || passwordNull) {
             throw new DataAccessException("Error: bad request");
         } 
         
         UserData userData = userDAO.readUser(loginRequest.username());
-        if (!Objects.equals(userData.password(), hashedPassword)) {
+        if (!BCrypt.checkpw(loginRequest.password(), userData.password())) {
             throw new DataAccessException("Error: unauthorized");
         }
 
