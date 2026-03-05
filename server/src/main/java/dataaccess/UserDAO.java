@@ -38,13 +38,14 @@ public class UserDAO {
                 try (ResultSet rs = preparedStatement.executeQuery()) {
                     if (rs.next()) {
                         return readUser(rs);
+                    } else {
+                        throw new DataAccessException("Error: unauthorized");
                     }
                 }
             }
         } catch (SQLException ex) {
             throw new DataAccessException(String.format("Unable to get user by username: %s", ex.getMessage()));
         }
-        return null;
     }
 
     public void clear() throws DataAccessException {

@@ -49,7 +49,9 @@ public class AuthDAO {
             var statement = "DELETE FROM auth WHERE authToken=?";
             try (PreparedStatement preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.setString(1, authToken);
-                preparedStatement.executeUpdate();
+                int deleted = preparedStatement.executeUpdate();
+                if (deleted == 0)
+                    throw new DataAccessException("Error: unauthorized");
             }
         } catch (SQLException ex) {
             throw new DataAccessException(String.format("Unable to delete auth: %s", ex.getMessage()));

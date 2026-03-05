@@ -33,7 +33,15 @@ public class UserService {
         }
         
         UserData user = new UserData(registerRequest.username(), registerRequest.password(), registerRequest.email());
-        userDAO.createUser(user);
+        try {
+            userDAO.createUser(user);
+        } catch (DataAccessException ex) {
+            if (ex.getMessage().contains("Duplicate entry")) {
+                throw new DataAccessException("Error: already taken");
+            } else {
+                throw new DataAccessException(ex.getMessage());
+            }
+        }
 
         Authtoken token = new Authtoken();
         AuthData authData = new AuthData(token.getAuthToken(), user.username());
