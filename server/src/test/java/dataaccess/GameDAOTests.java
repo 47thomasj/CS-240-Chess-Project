@@ -62,7 +62,7 @@ public class GameDAOTests {
 
     @Test
     @Order(4)
-    @DisplayName("Test that a game can be read (Create a chess game, then add it, then read it back, and assert that the resulting game obj is eq to the original one)")
+    @DisplayName("Test that a game can be read")
     public void readGame() throws DataAccessException {
         ChessGame game = new ChessGame();
         int gameID = gameDAO.createGame(new GameData(0, "white", "black", "testGame", game));
@@ -83,7 +83,7 @@ public class GameDAOTests {
 
     @Test
     @Order(6)
-    @DisplayName("Test that a game can be updated (Create a chess game, then add it, then change it's state by making a move, then update it, then read it back, and assert that the resulting game obj is eq to the updated one)")
+    @DisplayName("Test that a game can be updated")
     public void updateGame() throws Exception {
         ChessGame game = new ChessGame();
         int gameID = gameDAO.createGame(new GameData(0, "white", "black", "testGame", game));

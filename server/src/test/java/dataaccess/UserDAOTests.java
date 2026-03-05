@@ -74,7 +74,8 @@ public class UserDAOTests {
         userDAO.createUser(testUser);
         UserData result = userDAO.readUser(testUser.username());
         Assertions.assertNotEquals(testUser.password(), result.password(), "Password should not be stored raw");
-        Assertions.assertTrue(BCrypt.checkpw(testUser.password(), result.password()), "Stored password should be a valid BCrypt hash of the original");
+        String message = "Stored password should be a valid BCrypt hash of the original";
+        Assertions.assertTrue(BCrypt.checkpw(testUser.password(), result.password()), message);
     }
 
     @Test

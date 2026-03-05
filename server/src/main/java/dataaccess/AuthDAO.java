@@ -50,8 +50,9 @@ public class AuthDAO {
             try (PreparedStatement preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.setString(1, authToken);
                 int deleted = preparedStatement.executeUpdate();
-                if (deleted == 0)
+                if (deleted == 0) {
                     throw new DataAccessException("Error: unauthorized");
+                }
             }
         } catch (SQLException ex) {
             throw new DataAccessException(String.format("Error: unable to delete auth: %s", ex.getMessage()));

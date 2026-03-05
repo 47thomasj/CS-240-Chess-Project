@@ -29,13 +29,15 @@ public class GameDAO {
                 preparedStatement.setString(4, gson.toJson(data.game()));
                 preparedStatement.executeUpdate();
                 try (ResultSet keys = preparedStatement.getGeneratedKeys()) {
-                    if (keys.next())
+                    if (keys.next()) {
                         return keys.getInt(1);
+                    }
                 }
             }
         } catch (SQLException ex) {
-            if (ex.getErrorCode() == 1062)
+            if (ex.getErrorCode() == 1062) {
                 throw new DataAccessException("Error: game id already taken");
+            }
             throw new DataAccessException(String.format("Error: unable to create game: %s", ex.getMessage()));
         }
         return -1;
@@ -70,8 +72,9 @@ public class GameDAO {
                 preparedStatement.setString(4, gson.toJson(data.game()));
                 preparedStatement.setInt(5, data.gameID());
                 int updated = preparedStatement.executeUpdate();
-                if (updated == 0)
+                if (updated == 0) {
                     throw new DataAccessException("Error: invalid game id");
+                }
             }
         } catch (SQLException ex) {
             throw new DataAccessException(String.format("Error: unable to update game: %s", ex.getMessage()));
