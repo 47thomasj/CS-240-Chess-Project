@@ -16,10 +16,10 @@ public class AuthDAO {
     public void createAuth(AuthData authData) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
             var statement = "INSERT INTO auth (authToken, username) VALUES (?, ?)";
-            try (PreparedStatement ps = conn.prepareStatement(statement)) {
-                ps.setString(1, authData.authToken());
-                ps.setString(2, authData.username());
-                ps.executeUpdate();
+            try (PreparedStatement preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.setString(1, authData.authToken());
+                preparedStatement.setString(2, authData.username());
+                preparedStatement.executeUpdate();
             }
         } catch (SQLException ex) {
             throw new DataAccessException(String.format("Unable to create auth: %s", ex.getMessage()));
@@ -29,9 +29,9 @@ public class AuthDAO {
     public AuthData readAuth(String authToken) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
             var statement = "SELECT authToken, username FROM auth WHERE authToken=?";
-            try (PreparedStatement ps = conn.prepareStatement(statement)) {
-                ps.setString(1, authToken);
-                try (ResultSet rs = ps.executeQuery()) {
+            try (PreparedStatement preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.setString(1, authToken);
+                try (ResultSet rs = preparedStatement.executeQuery()) {
                     if (rs.next()) {
                         return readAuth(rs);
                     } else {
@@ -47,9 +47,9 @@ public class AuthDAO {
     public void deleteAuth(String authToken) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
             var statement = "DELETE FROM auth WHERE authToken=?";
-            try (PreparedStatement ps = conn.prepareStatement(statement)) {
-                ps.setString(1, authToken);
-                ps.executeUpdate();
+            try (PreparedStatement preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.setString(1, authToken);
+                preparedStatement.executeUpdate();
             }
         } catch (SQLException ex) {
             throw new DataAccessException(String.format("Unable to delete auth: %s", ex.getMessage()));
@@ -59,8 +59,8 @@ public class AuthDAO {
     public void clear() throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
             var statement = "DELETE FROM auth";
-            try (PreparedStatement ps = conn.prepareStatement(statement)) {
-                ps.executeUpdate();
+            try (PreparedStatement preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.executeUpdate();
             }
         } catch (SQLException ex) {
             throw new DataAccessException(String.format("Unable to clear auth: %s", ex.getMessage()));

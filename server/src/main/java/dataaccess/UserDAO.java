@@ -17,11 +17,11 @@ public class UserDAO {
     public void createUser(UserData data) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
             var statement = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
-            try (PreparedStatement ps = conn.prepareStatement(statement)) {
-                ps.setString(1, data.username());
-                ps.setString(2, data.password());
-                ps.setString(3, data.email());
-                ps.executeUpdate();
+            try (PreparedStatement preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.setString(1, data.username());
+                preparedStatement.setString(2, data.password());
+                preparedStatement.setString(3, data.email());
+                preparedStatement.executeUpdate();
             }
         } catch (SQLException ex) {
             throw new DataAccessException(String.format("Unable to create user: %s", ex.getMessage()));
@@ -31,9 +31,9 @@ public class UserDAO {
     public UserData readUser(String username) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
             var statement = "SELECT username, password, email FROM users WHERE username=?";
-            try (PreparedStatement ps = conn.prepareStatement(statement)) {
-                ps.setString(1, username);
-                try (ResultSet rs = ps.executeQuery()) {
+            try (PreparedStatement preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.setString(1, username);
+                try (ResultSet rs = preparedStatement.executeQuery()) {
                     if (rs.next()) {
                         return readUser(rs);
                     }
@@ -48,8 +48,8 @@ public class UserDAO {
     public void clear() throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
             var statement = "DELETE FROM users";
-            try (PreparedStatement ps = conn.prepareStatement(statement)) {
-                ps.executeUpdate();
+            try (PreparedStatement preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.executeUpdate();
             }
         } catch (SQLException ex) {
             throw new DataAccessException(String.format("Unable to clear users: %s", ex.getMessage()));
