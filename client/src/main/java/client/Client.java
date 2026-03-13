@@ -28,40 +28,28 @@ public class Client {
         this.postlogin = new Menu("Logout", postLoginHelpString, "You are now logged in. Welcome!");
 
         this.prelogin.addOption(new MenuOption("Login", () -> {
-            return this.postlogin.interactWithMenu();
+            this.postlogin.interactWithMenu();
         }));
         this.prelogin.addOption(new MenuOption("Register", () -> {
             System.out.println("Register a new account");
-            return null;
         }));
 
 
         this.postlogin.addOption(new MenuOption("Create a new Chess Game", () -> {
             System.out.println("Create a new Chess Game");
-            return null;
         }));
         this.postlogin.addOption(new MenuOption("List all Chess Games available", () -> {
             System.out.println("List all Chess Games available");
-            return null;
         }));
         this.postlogin.addOption(new MenuOption("Join and begin playing a pre-existing Chess Game", () -> {
             System.out.println("Join and begin playing a pre-existing Chess Game");
-            return null;
         }));
         this.postlogin.addOption(new MenuOption("Observe a pre-existing Chess Game, but not participate in it", () -> {
             System.out.println("Observe a pre-existing Chess Game, but not participate in it");
-            return null;
         }));
     }
 
     public void run() {
-        String continueRunning = "";
-        while (continueRunning != Menu.EXIT_OPTION) {
-            try {
-                continueRunning = (String) this.prelogin.interactWithMenu();
-            } catch (Exception e) {
-                System.out.println("An error occurred. Please try again.");
-            }
-        }
+        this.prelogin.interactWithMenu();
     }
 }

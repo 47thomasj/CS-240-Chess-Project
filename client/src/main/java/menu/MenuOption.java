@@ -1,19 +1,17 @@
 package menu;
 
-import java.util.concurrent.Callable;
-
 public class MenuOption {
     
     private final String display;
-    private final Callable<Object> function;
+    private final Runnable function;
 
-    public MenuOption(String display, Callable<Object> function) {
+    public MenuOption(String display, Runnable function) {
         this.display = display;
         this.function = function;
     }
 
-    public Object execute() throws Exception {
-        return function.call();
+    public void execute() throws Exception {
+        function.run();
     }
 
     @Override
