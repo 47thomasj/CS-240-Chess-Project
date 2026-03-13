@@ -48,6 +48,7 @@ public class Menu {
                 }
                 if (choice == options.size() + 2) {
                     System.out.println(helpString);
+                    continue;
                 }
                 options.get(choice - 1).execute();
             } catch (Exception e) {

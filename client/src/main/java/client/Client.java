@@ -13,16 +13,17 @@ public class Client {
         + "\n\nOptions:"
         + "\n1. Login with your username and password"
         + "\n2. Register a new account"
-        + "\n3. Quit";
+        + "\n3. Quit"
+        + "\n4. Display this help message again";
         
         String postLoginHelpString = "This is the main menu. You can select an option by entering the number of the option."
         + "\n\nOptions:"
-        + "\n1. Logout of your account"
-        + "\n2. Create a new Chess Game"
-        + "\n3. List all Chess Games available"
-        + "\n4. Join and begin playing a pre-existing Chess Game"
-        + "\n5. Observe a pre-existing Chess Game, but not participate in it"
-        + "\n6. Quit";
+        + "\n1. Create a new Chess Game"
+        + "\n2. List all Chess Games available"
+        + "\n3. Join and begin playing a pre-existing Chess Game"
+        + "\n4. Observe a pre-existing Chess Game, but not participate in it"
+        + "\n5. Logout of your account"
+        + "\n6. Display this help message again";
 
         this.prelogin = new Menu("Quit", preLoginHelpString, "Welcome to the Chess Game!");
         this.postlogin = new Menu("Logout", postLoginHelpString, "You are now logged in. Welcome!");
