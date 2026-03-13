@@ -38,6 +38,7 @@ public class Menu {
         while (true) {
             try {
                 printMenu();
+                System.out.print("Enter your choice: ");
                 choice = scanner.nextInt();
                 if (choice < 1 || choice > options.size() + 2) {
                     System.out.println("Please select a valid menu option. (1-" + (options.size() + 2) + ")");
