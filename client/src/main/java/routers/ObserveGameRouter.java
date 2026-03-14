@@ -1,49 +1,34 @@
 package routers;
 
-import com.google.gson.Gson;
 import java.util.Scanner;
-import java.net.http.HttpClient;
 
-import routers.ListGamesRouter.ListGamesOutcome;
 import models.GameData;
 
 import board.ChessPrinter;
 import chess.ChessGame.TeamColor;
 
+import client.GamesManager;
+
 public class ObserveGameRouter {
-    private final ListGamesRouter listGamesRouter;
+    private final GamesManager gamesManager;
     
-    public ObserveGameRouter(String serverUrl, Gson gson, HttpClient client) {
-        this.listGamesRouter = new ListGamesRouter(serverUrl, gson, client);
+    public ObserveGameRouter(GamesManager gamesManager) {
+        this.gamesManager = gamesManager;
     }
 
     public void doObserveGame(String authToken) {
-        ListGamesOutcome listGamesOutcome = listGamesRouter.doListGames(authToken);
-        GameData[] games = null;
-
-        if (listGamesOutcome instanceof ListGamesOutcome.Success) {
-            games = ((ListGamesOutcome.Success) listGamesOutcome).games();
-            listGamesRouter.printGames(games);
-        } else {
-            System.out.println("List Games failed: " + ((ListGamesOutcome.Failure) listGamesOutcome).message());
-        }
+        gamesManager.printGames();
 
         @SuppressWarnings("resource")
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter the name of the game to observe: ");
-        String gameName = scanner.nextLine();
-        GameData game = null;
-        for (GameData g : games) {
-            if (g.gameName().equals(gameName)) {
-                game = g;
-                break;
-            }
-        }
+        System.out.print("Enter the ID of the game to observe: ");
+        int gameID = scanner.nextInt();
+        GameData game = gamesManager.getGameByNumber(gameID);
         if (game == null) {
             System.out.println("Game not found");
+            return;
         }
 
         ChessPrinter.printBoard(game.game().getBoard(), TeamColor.WHITE);
-        
     }
 }

@@ -21,8 +21,6 @@ import routers.ListGamesRouter.ListGamesOutcome;
 import routers.CreateGameRouter;
 import routers.CreateGameRouter.CreateGameOutcome;
 
-import models.GameData;
-
 import routers.ObserveGameRouter;
 
 public class Client {
@@ -42,17 +40,21 @@ public class Client {
     private HttpClient client;
 
     private String authToken;
+    private GamesManager gamesManager;
 
     public Client() {
         this("http://localhost:8080", new Gson());
         this.authToken = null;
+        this.gamesManager = new GamesManager(null);
+
         this.client = HttpClient.newHttpClient();
+
         this.registerRouter = new RegisterRouter(serverUrl, gson, client);
         this.loginRouter = new LoginRouter(serverUrl, gson, client);
         this.logoutRouter = new LogoutRouter(serverUrl, client);
         this.listGamesRouter = new ListGamesRouter(serverUrl, gson, client);
         this.createGameRouter = new CreateGameRouter(serverUrl, gson, client);
-        this.observeGameRouter = new ObserveGameRouter(serverUrl, gson, client);
+        this.observeGameRouter = new ObserveGameRouter(gamesManager);
     }
 
     public Client(String serverUrl, Gson gson) {
@@ -81,7 +83,7 @@ public class Client {
                 this.authToken = null;
                 this.prelogin.interactWithMenu();
             } else {
-                System.out.println("Logout failed: " + ((LogoutOutcome.Failure) outcome).message());
+                System.out.println("Could not logout. Try restarting the program.");
                 this.postlogin.interactWithMenu();
             }
         }, postLoginHelpString, "You are now logged in. Welcome!");
@@ -92,7 +94,7 @@ public class Client {
                 this.authToken = ((LoginOutcome.Success) outcome).auth().authToken();
                 this.postlogin.interactWithMenu();
             } else {
-                System.out.println("Login failed: " + ((LoginOutcome.Failure) outcome).message());
+                System.out.println("Could not login. Did you enter the right username and password?");
             }
         }));
         this.prelogin.addOption(new MenuOption("Register", () -> {
@@ -101,7 +103,7 @@ public class Client {
                 this.authToken = ((RegisterOutcome.Success) outcome).auth().authToken();
                 this.postlogin.interactWithMenu();
             } else {
-                System.out.println("Registration failed: " + ((RegisterOutcome.Failure) outcome).message());
+                System.out.println("Could not register. Did you enter a valid username, password, and email?");
             }
         }));
 
@@ -111,28 +113,30 @@ public class Client {
             if (outcome instanceof CreateGameOutcome.Success) {
                 System.out.println("Game created successfully!");
             } else {
-                System.out.println("Create Game failed: " + ((CreateGameOutcome.Failure) outcome).message());
+                System.out.println("Could not create game. Did you enter a valid name?");
             }
         }));
         this.postlogin.addOption(new MenuOption("List all Chess Games available", () -> {
             ListGamesOutcome outcome = this.listGamesRouter.doListGames(this.authToken);
             if (outcome instanceof ListGamesOutcome.Success) {
+                gamesManager.setGames(((ListGamesOutcome.Success) outcome).games());
                 System.out.println("\nsGames available:");
-                for (GameData game : ((ListGamesOutcome.Success) outcome).games()) {
-                    System.out.println(
-                        "Game Name: " + game.gameName() +
-                        " - White Username: " + game.whiteUsername() +
-                        " - Black Username: " + game.blackUsername()
-                    );
-                }
+                gamesManager.printGames();
             } else {
-                System.out.println("List Games failed: " + ((ListGamesOutcome.Failure) outcome).message());
+                System.out.println("No games available");
             }
         }));
         this.postlogin.addOption(new MenuOption("Join and begin playing a pre-existing Chess Game", () -> {
             System.out.println("Join and begin playing a pre-existing Chess Game");
         }));
         this.postlogin.addOption(new MenuOption("Observe a pre-existing Chess Game, but not participate in it", () -> {
+            ListGamesOutcome outcome = this.listGamesRouter.doListGames(this.authToken);
+            if (outcome instanceof ListGamesOutcome.Success) {
+                gamesManager.setGames(((ListGamesOutcome.Success) outcome).games());
+            } else {
+                System.out.println("No games available");
+                return;
+            }
             observeGameRouter.doObserveGame(this.authToken);
         }));
     }

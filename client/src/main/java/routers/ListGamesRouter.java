@@ -22,17 +22,6 @@ public class ListGamesRouter {
         this.client = client;
     }
 
-    public void printGames(GameData[] games) {
-        System.out.println("\nsGames available:");
-        for (GameData game : games) {
-            System.out.println(
-                "Game Name: " + game.gameName() +
-                " - White Username: " + game.whiteUsername() +
-                " - Black Username: " + game.blackUsername()
-            );
-        }
-    }
-
     public ListGamesOutcome doListGames(String authToken) {
         ListGamesOutcome outcome = this.listGames(authToken);
         if (outcome instanceof ListGamesOutcome.Success) {
