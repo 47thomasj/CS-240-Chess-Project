@@ -7,12 +7,14 @@ public class Menu {
     
     private ArrayList<MenuOption> options;
     private String abortOption;
+    private Runnable abortFunction;
     private String helpString;
     private String titleString;
 
-    public Menu(String abortOption, String helpString, String titleString) {
+    public Menu(String abortOption, Runnable abortFunction, String helpString, String titleString) {
         this.options = new ArrayList<>();
         this.abortOption = abortOption;
+        this.abortFunction = abortFunction;
         this.helpString = helpString;
         this.titleString = titleString;
     }
@@ -45,6 +47,9 @@ public class Menu {
                     continue;
                 }
                 if (choice == options.size() + 1) {
+                    if (abortFunction != null) {
+                        abortFunction.run();
+                    }
                     break;
                 }
                 if (choice == options.size() + 2) {
