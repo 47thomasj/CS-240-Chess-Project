@@ -45,7 +45,7 @@ public class RegisterRouter {
     /**
      * Calls POST /user. Returns AuthData on success, or a failure with message.
      */
-    public RegisterOutcome register(String username, String password, String email) {
+    private RegisterOutcome register(String username, String password, String email) {
         String url = serverUrl + "/user";
         String body = gson.toJson(new RegisterRequest(username, password, email));
         try {

@@ -9,6 +9,9 @@ import java.net.http.HttpClient;
 import routers.RegisterRouter;
 import routers.RegisterRouter.RegisterOutcome;
 
+import routers.LoginRouter;
+import routers.LoginRouter.LoginOutcome;
+
 public class Client {
 
     private String serverUrl;
@@ -16,6 +19,7 @@ public class Client {
     private Menu postlogin;
 
     private RegisterRouter registerRouter;
+    private LoginRouter loginRouter;
 
     private Gson gson;
     private HttpClient client;
@@ -24,6 +28,7 @@ public class Client {
         this("http://localhost:8080", new Gson());
         this.client = HttpClient.newHttpClient();
         this.registerRouter = new RegisterRouter(serverUrl, gson, client);
+        this.loginRouter = new LoginRouter(serverUrl, gson, client);
     }
 
     public Client(String serverUrl, Gson gson) {
@@ -49,7 +54,12 @@ public class Client {
         this.postlogin = new Menu("Logout", postLoginHelpString, "You are now logged in. Welcome!");
 
         this.prelogin.addOption(new MenuOption("Login", () -> {
-            this.postlogin.interactWithMenu();
+            LoginOutcome outcome = this.loginRouter.doLogin();
+            if (outcome instanceof LoginOutcome.Success) {
+                this.postlogin.interactWithMenu();
+            } else {
+                System.out.println("Login failed: " + ((LoginOutcome.Failure) outcome).message());
+            }
         }));
         this.prelogin.addOption(new MenuOption("Register", () -> {
             RegisterOutcome outcome = this.registerRouter.doRegister();
