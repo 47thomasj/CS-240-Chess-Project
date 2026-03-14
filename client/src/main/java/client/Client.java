@@ -15,6 +15,11 @@ import routers.LoginRouter.LoginOutcome;
 import routers.LogoutRouter;
 import routers.LogoutRouter.LogoutOutcome;
 
+import routers.ListGamesRouter;
+import routers.ListGamesRouter.ListGamesOutcome;
+
+import models.GameData;
+
 public class Client {
 
     private String serverUrl;
@@ -24,6 +29,7 @@ public class Client {
     private RegisterRouter registerRouter;
     private LoginRouter loginRouter;
     private LogoutRouter logoutRouter;
+    private ListGamesRouter listGamesRouter;
 
     private Gson gson;
     private HttpClient client;
@@ -37,6 +43,7 @@ public class Client {
         this.registerRouter = new RegisterRouter(serverUrl, gson, client);
         this.loginRouter = new LoginRouter(serverUrl, gson, client);
         this.logoutRouter = new LogoutRouter(serverUrl, client);
+        this.listGamesRouter = new ListGamesRouter(serverUrl, gson, client);
     }
 
     public Client(String serverUrl, Gson gson) {
@@ -94,7 +101,16 @@ public class Client {
             System.out.println("Create a new Chess Game");
         }));
         this.postlogin.addOption(new MenuOption("List all Chess Games available", () -> {
-            System.out.println("List all Chess Games available");
+            ListGamesOutcome outcome = this.listGamesRouter.doListGames(this.authToken);
+            if (outcome instanceof ListGamesOutcome.Success) {
+                System.out.println("Games available:");
+                for (GameData game : ((ListGamesOutcome.Success) outcome).games()) {
+                    System.out.println("Game ID: " + game.gameID() + " - Game Name: " + game.gameName()
+                    + " - White Username: " + game.whiteUsername() + " - Black Username: " + game.blackUsername());
+                }
+            } else {
+                System.out.println("List Games failed: " + ((ListGamesOutcome.Failure) outcome).message());
+            }
         }));
         this.postlogin.addOption(new MenuOption("Join and begin playing a pre-existing Chess Game", () -> {
             System.out.println("Join and begin playing a pre-existing Chess Game");
