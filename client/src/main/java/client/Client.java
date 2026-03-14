@@ -23,6 +23,8 @@ import routers.CreateGameRouter.CreateGameOutcome;
 
 import models.GameData;
 
+import routers.ObserveGameRouter;
+
 public class Client {
 
     private String serverUrl;
@@ -34,6 +36,7 @@ public class Client {
     private LogoutRouter logoutRouter;
     private ListGamesRouter listGamesRouter;
     private CreateGameRouter createGameRouter;
+    private ObserveGameRouter observeGameRouter;
 
     private Gson gson;
     private HttpClient client;
@@ -49,6 +52,7 @@ public class Client {
         this.logoutRouter = new LogoutRouter(serverUrl, client);
         this.listGamesRouter = new ListGamesRouter(serverUrl, gson, client);
         this.createGameRouter = new CreateGameRouter(serverUrl, gson, client);
+        this.observeGameRouter = new ObserveGameRouter(serverUrl, gson, client);
     }
 
     public Client(String serverUrl, Gson gson) {
@@ -129,7 +133,7 @@ public class Client {
             System.out.println("Join and begin playing a pre-existing Chess Game");
         }));
         this.postlogin.addOption(new MenuOption("Observe a pre-existing Chess Game, but not participate in it", () -> {
-            System.out.println("Observe a pre-existing Chess Game, but not participate in it");
+            observeGameRouter.doObserveGame(this.authToken);
         }));
     }
 
