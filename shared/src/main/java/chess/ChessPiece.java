@@ -94,8 +94,23 @@ public class ChessPiece {
     @Override
     public String toString() {
         if (this.getTeamColor() == ChessGame.TeamColor.WHITE) {
-            return this.getPieceType().toString().substring(0,2).toUpperCase();
+            return switch (this.getPieceType()) {
+                case KING -> "K";
+                case QUEEN -> "Q";
+                case BISHOP -> "B";
+                case KNIGHT -> "N";
+                case ROOK -> "R";
+                case PAWN -> "P";
+            };
+        } else {
+            return switch (this.getPieceType()) {
+                case KING -> "k";
+                case QUEEN -> "q";
+                case BISHOP -> "b";
+                case KNIGHT -> "n";
+                case ROOK -> "r";
+                case PAWN -> "p";
+            };
         }
-        return this.getPieceType().toString().substring(0,2).toLowerCase();
     }
 }
