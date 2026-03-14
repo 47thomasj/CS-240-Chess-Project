@@ -18,6 +18,9 @@ import routers.LogoutRouter.LogoutOutcome;
 import routers.ListGamesRouter;
 import routers.ListGamesRouter.ListGamesOutcome;
 
+import routers.CreateGameRouter;
+import routers.CreateGameRouter.CreateGameOutcome;
+
 import models.GameData;
 
 public class Client {
@@ -30,6 +33,7 @@ public class Client {
     private LoginRouter loginRouter;
     private LogoutRouter logoutRouter;
     private ListGamesRouter listGamesRouter;
+    private CreateGameRouter createGameRouter;
 
     private Gson gson;
     private HttpClient client;
@@ -44,6 +48,7 @@ public class Client {
         this.loginRouter = new LoginRouter(serverUrl, gson, client);
         this.logoutRouter = new LogoutRouter(serverUrl, client);
         this.listGamesRouter = new ListGamesRouter(serverUrl, gson, client);
+        this.createGameRouter = new CreateGameRouter(serverUrl, gson, client);
     }
 
     public Client(String serverUrl, Gson gson) {
@@ -98,15 +103,23 @@ public class Client {
 
 
         this.postlogin.addOption(new MenuOption("Create a new Chess Game", () -> {
-            System.out.println("Create a new Chess Game");
+            CreateGameOutcome outcome = this.createGameRouter.doCreateGame(this.authToken);
+            if (outcome instanceof CreateGameOutcome.Success) {
+                System.out.println("Game created successfully!");
+            } else {
+                System.out.println("Create Game failed: " + ((CreateGameOutcome.Failure) outcome).message());
+            }
         }));
         this.postlogin.addOption(new MenuOption("List all Chess Games available", () -> {
             ListGamesOutcome outcome = this.listGamesRouter.doListGames(this.authToken);
             if (outcome instanceof ListGamesOutcome.Success) {
-                System.out.println("Games available:");
+                System.out.println("\nsGames available:");
                 for (GameData game : ((ListGamesOutcome.Success) outcome).games()) {
-                    System.out.println("Game ID: " + game.gameID() + " - Game Name: " + game.gameName()
-                    + " - White Username: " + game.whiteUsername() + " - Black Username: " + game.blackUsername());
+                    System.out.println(
+                        "Game Name: " + game.gameName() +
+                        " - White Username: " + game.whiteUsername() +
+                        " - Black Username: " + game.blackUsername()
+                    );
                 }
             } else {
                 System.out.println("List Games failed: " + ((ListGamesOutcome.Failure) outcome).message());
