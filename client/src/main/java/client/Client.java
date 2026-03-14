@@ -3,12 +3,32 @@ package client;
 import menu.Menu;
 import menu.MenuOption;
 
+import com.google.gson.Gson;
+import java.net.http.HttpClient;
+
+import routers.RegisterRouter;
+import routers.RegisterRouter.RegisterOutcome;
+
 public class Client {
-    
-    private final Menu prelogin;
-    private final Menu postlogin;
+
+    private String serverUrl;
+    private Menu prelogin;
+    private Menu postlogin;
+
+    private RegisterRouter registerRouter;
+
+    private Gson gson;
+    private HttpClient client;
 
     public Client() {
+        this("http://localhost:8080", new Gson());
+        this.client = HttpClient.newHttpClient();
+        this.registerRouter = new RegisterRouter(serverUrl, gson, client);
+    }
+
+    public Client(String serverUrl, Gson gson) {
+        this.serverUrl = serverUrl;
+        this.gson = gson;
         String preLoginHelpString = "This is the landing page menu. You can select an option by entering the number of the option."
         + "\n\nOptions:"
         + "\n1. Login with your username and password"
@@ -32,7 +52,12 @@ public class Client {
             this.postlogin.interactWithMenu();
         }));
         this.prelogin.addOption(new MenuOption("Register", () -> {
-            System.out.println("Register a new account");
+            RegisterOutcome outcome = this.registerRouter.doRegister();
+            if (outcome instanceof RegisterOutcome.Success) {
+                this.postlogin.interactWithMenu();
+            } else {
+                System.out.println("Registration failed: " + ((RegisterOutcome.Failure) outcome).message());
+            }
         }));
 
 

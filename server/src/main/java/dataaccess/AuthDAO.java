@@ -1,7 +1,8 @@
 package dataaccess;
 
-import model.AuthData;
 import java.sql.*;
+
+import models.AuthData;
 
 public class AuthDAO {
 

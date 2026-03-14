@@ -1,7 +1,8 @@
 package dataaccess;
 
-import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
+
+import models.UserData;
 
 import java.sql.*;
 

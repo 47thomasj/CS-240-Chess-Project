@@ -1,7 +1,8 @@
 package dataaccess;
 
-import model.AuthData;
 import org.junit.jupiter.api.*;
+
+import models.AuthData;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

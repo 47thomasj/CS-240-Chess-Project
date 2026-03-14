@@ -1,7 +1,8 @@
 package dataaccess;
 
-import model.GameData;
 import chess.ChessGame;
+import models.GameData;
+
 import com.google.gson.Gson;
 
 import java.util.*;

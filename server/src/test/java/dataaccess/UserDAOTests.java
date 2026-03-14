@@ -1,8 +1,9 @@
 package dataaccess;
 
-import model.UserData;
 import org.junit.jupiter.api.*;
 import org.mindrot.jbcrypt.BCrypt;
+
+import models.UserData;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

@@ -3,7 +3,8 @@ package dataaccess;
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
-import model.GameData;
+import models.GameData;
+
 import org.junit.jupiter.api.*;
 
 import java.sql.Connection;
