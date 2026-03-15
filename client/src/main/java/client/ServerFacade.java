@@ -29,7 +29,6 @@ import menu.Menu;
 public class ServerFacade {
 
     private final Gson gson;
-    private final HttpClient client;
 
     private final GamesManager gamesManager;
 
@@ -42,8 +41,11 @@ public class ServerFacade {
     private final JoinGameRouter joinGameRouter;
 
     public ServerFacade(String serverUrl, GamesManager gamesManager) {
+        this(serverUrl, gamesManager, HttpClient.newHttpClient());
+    }
+
+    public ServerFacade(String serverUrl, GamesManager gamesManager, HttpClient client) {
         this.gson = new Gson();
-        this.client = HttpClient.newHttpClient();
         this.gamesManager = gamesManager;
 
         this.logoutRouter = new LogoutRouter(serverUrl, client);
