@@ -9,7 +9,10 @@ public class ChessPrinter {
     
     public static void printBoard(ChessBoard board, TeamColor teamColor) {
     String letters = teamColor == TeamColor.WHITE ? " a  b  c  d  e  f  g  h " : " h  g  f  e  d  c  b  a ";
-    String[] numbers = teamColor == TeamColor.WHITE ? new String[] {"1", "2", "3", "4", "5", "6", "7", "8"} : new String[] {"8", "7", "6", "5", "4", "3", "2", "1"};
+
+    String[] numbersWhite = new String[] {"1", "2", "3", "4", "5", "6", "7", "8"};
+    String[] numbersBlack = new String[] {"8", "7", "6", "5", "4", "3", "2", "1"};
+    String[] numbers = teamColor == TeamColor.WHITE ? numbersWhite : numbersBlack;
     String topLeftCornerColor = teamColor == TeamColor.WHITE ? EscapeSequences.SET_BG_COLOR_WHITE : EscapeSequences.SET_BG_COLOR_BLACK;
     String teamTextColor = teamColor == TeamColor.WHITE ? EscapeSequences.SET_TEXT_COLOR_BLUE : EscapeSequences.SET_TEXT_COLOR_RED;
     String oponentTextColor = teamColor == TeamColor.WHITE ? EscapeSequences.SET_TEXT_COLOR_RED : EscapeSequences.SET_TEXT_COLOR_BLUE;

@@ -68,7 +68,10 @@ public class Client {
         this.postlogin.addOption(new MenuOption("Create a new Chess Game", () -> serverFacade.createGame(this.authToken)));
         this.postlogin.addOption(new MenuOption("List all Chess Games available", () -> serverFacade.listGames(this.authToken)));
         this.postlogin.addOption(new MenuOption("Join and begin playing a pre-existing Chess Game", () -> serverFacade.joinGame(this.authToken)));
-        this.postlogin.addOption(new MenuOption("Observe a pre-existing Chess Game, but not participate in it", () -> serverFacade.observeGame(this.authToken)));
+        this.postlogin.addOption(new MenuOption(
+            "Observe a pre-existing Chess Game, but not participate in it", 
+            () -> serverFacade.observeGame(this.authToken))
+        );
     }
 
     public void run() {
