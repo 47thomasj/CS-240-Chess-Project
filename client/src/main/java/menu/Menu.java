@@ -1,6 +1,7 @@
 package menu;
 
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Menu {
@@ -57,6 +58,9 @@ public class Menu {
                     continue;
                 }
                 options.get(choice - 1).execute();
+            } catch (InputMismatchException e) {
+                System.out.println("Please enter a number. (1-" + (options.size() + 2) + ")");
+                scanner.nextLine();
             } catch (Exception e) {
                 System.out.println("Error while running option: " + e.getMessage());
             }

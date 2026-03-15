@@ -3,69 +3,25 @@ package client;
 import menu.Menu;
 import menu.MenuOption;
 
-import com.google.gson.Gson;
-import java.net.http.HttpClient;
-
-import routers.RegisterRouter;
-import routers.RegisterRouter.RegisterOutcome;
-
-import routers.LoginRouter;
-import routers.LoginRouter.LoginOutcome;
-
-import routers.LogoutRouter;
-import routers.LogoutRouter.LogoutOutcome;
-
-import routers.ListGamesRouter;
-import routers.ListGamesRouter.ListGamesOutcome;
-
-import routers.CreateGameRouter;
-import routers.CreateGameRouter.CreateGameOutcome;
-
-import routers.ObserveGameRouter;
-
-import chess.ChessGame.TeamColor;
-
-import routers.JoinGameRouter;
-
 public class Client {
 
     private String serverUrl;
     private Menu prelogin;
     private Menu postlogin;
 
-    private RegisterRouter registerRouter;
-    private LoginRouter loginRouter;
-    private LogoutRouter logoutRouter;
-    private ListGamesRouter listGamesRouter;
-    private CreateGameRouter createGameRouter;
-    private ObserveGameRouter observeGameRouter;
-    private JoinGameRouter joinGameRouter;
-
-    private Gson gson;
-    private HttpClient client;
+    private ServerFacade serverFacade;
 
     private String authToken;
-    private GamesManager gamesManager;
+    private GamesManager gamesManager;        
 
     public Client() {
-        this("http://localhost:8080", new Gson());
+        this.serverUrl = "http://localhost:8080";
         this.authToken = null;
         this.gamesManager = new GamesManager(null);
 
-        this.client = HttpClient.newHttpClient();
+        this.serverFacade = new ServerFacade(serverUrl, gamesManager);
 
-        this.registerRouter = new RegisterRouter(serverUrl, gson, client);
-        this.loginRouter = new LoginRouter(serverUrl, gson, client);
-        this.logoutRouter = new LogoutRouter(serverUrl, client);
-        this.listGamesRouter = new ListGamesRouter(serverUrl, gson, client);
-        this.createGameRouter = new CreateGameRouter(serverUrl, gson, client);
-        this.observeGameRouter = new ObserveGameRouter(gamesManager);
-        this.joinGameRouter = new JoinGameRouter(gamesManager, serverUrl, gson, client);
-    }
 
-    public Client(String serverUrl, Gson gson) {
-        this.serverUrl = serverUrl;
-        this.gson = gson;
         String preLoginHelpString = "This is the landing page menu. You can select an option by entering the number of the option."
         + "\n\nOptions:"
         + "\n1. Login with your username and password"
@@ -82,80 +38,37 @@ public class Client {
         + "\n5. Logout of your account"
         + "\n6. Display this help message again";
 
-        this.prelogin = new Menu("Quit", null, preLoginHelpString, "Welcome to the Chess Game!");
+        this.prelogin = new Menu("Quit", () -> System.exit(0), preLoginHelpString, "Welcome to the Chess Game!");
         this.postlogin = new Menu("Logout", () -> {
-            LogoutOutcome outcome = this.logoutRouter.doLogout(this.authToken);
-            if (outcome instanceof LogoutOutcome.Success) {
+            boolean outcome = serverFacade.logout(this.authToken, this.prelogin, this.postlogin);
+            if (outcome) {
                 this.authToken = null;
                 this.prelogin.interactWithMenu();
             } else {
-                System.out.println("Could not logout. Try restarting the program.");
                 this.postlogin.interactWithMenu();
             }
         }, postLoginHelpString, "You are now logged in. Welcome!");
 
         this.prelogin.addOption(new MenuOption("Login", () -> {
-            LoginOutcome outcome = this.loginRouter.doLogin();
-            if (outcome instanceof LoginOutcome.Success) {
-                this.authToken = ((LoginOutcome.Success) outcome).auth().authToken();
+            String outcome = serverFacade.login(this.postlogin);
+            if (outcome != null) {
+                this.authToken = outcome;
                 this.postlogin.interactWithMenu();
-            } else {
-                System.out.println("Could not login. Did you enter the right username and password?");
             }
         }));
-
         this.prelogin.addOption(new MenuOption("Register", () -> {
-            RegisterOutcome outcome = this.registerRouter.doRegister();
-            if (outcome instanceof RegisterOutcome.Success) {
-                this.authToken = ((RegisterOutcome.Success) outcome).auth().authToken();
+            String outcome = serverFacade.register(this.prelogin, this.postlogin);
+            if (outcome != null) {
+                this.authToken = outcome;
                 this.postlogin.interactWithMenu();
-            } else {
-                System.out.println("Could not register. Did you enter a valid username, password, and email?");
             }
         }));
 
 
-        this.postlogin.addOption(new MenuOption("Create a new Chess Game", () -> {
-            CreateGameOutcome outcome = this.createGameRouter.doCreateGame(this.authToken);
-            if (outcome instanceof CreateGameOutcome.Success) {
-                System.out.println("Game created successfully!");
-            } else {
-                System.out.println("Could not create game. Did you enter a valid name?");
-            }
-        }));
-
-        this.postlogin.addOption(new MenuOption("List all Chess Games available", () -> {
-            ListGamesOutcome outcome = this.listGamesRouter.doListGames(this.authToken);
-            if (outcome instanceof ListGamesOutcome.Success) {
-                gamesManager.setGames(((ListGamesOutcome.Success) outcome).games());
-                System.out.println("\nsGames available:");
-                gamesManager.printGames();
-            } else {
-                System.out.println("No games available");
-            }
-        }));
-
-        this.postlogin.addOption(new MenuOption("Join and begin playing a pre-existing Chess Game", () -> {
-            ListGamesOutcome outcome = this.listGamesRouter.doListGames(this.authToken);
-            if (outcome instanceof ListGamesOutcome.Success) {
-                gamesManager.setGames(((ListGamesOutcome.Success) outcome).games());
-            } else {
-                System.out.println("No games available");
-                return;
-            }
-            joinGameRouter.doJoinGame(this.authToken);
-        }));
-
-        this.postlogin.addOption(new MenuOption("Observe a pre-existing Chess Game, but not participate in it", () -> {
-            ListGamesOutcome outcome = this.listGamesRouter.doListGames(this.authToken);
-            if (outcome instanceof ListGamesOutcome.Success) {
-                gamesManager.setGames(((ListGamesOutcome.Success) outcome).games());
-            } else {
-                System.out.println("No games available");
-                return;
-            }
-            observeGameRouter.doObserveGame(TeamColor.WHITE);
-        }));
+        this.postlogin.addOption(new MenuOption("Create a new Chess Game", () -> serverFacade.createGame(this.authToken)));
+        this.postlogin.addOption(new MenuOption("List all Chess Games available", () -> serverFacade.listGames(this.authToken)));
+        this.postlogin.addOption(new MenuOption("Join and begin playing a pre-existing Chess Game", () -> serverFacade.joinGame(this.authToken)));
+        this.postlogin.addOption(new MenuOption("Observe a pre-existing Chess Game, but not participate in it", () -> serverFacade.observeGame(this.authToken)));
     }
 
     public void run() {
