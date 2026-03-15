@@ -2,153 +2,143 @@ package client;
 
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-import static org.mockito.ArgumentMatchers.any;
+import server.Server;
 
 import java.io.ByteArrayInputStream;
+import java.net.URI;
 import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-import com.google.gson.Gson;
 import models.GameData;
-import models.results.ListGamesResult;
-import chess.ChessGame;
 
 public class ServerFacadeTests {
 
-    private HttpClient mockHttpClient;
+    private static Server server;
+    private static String serverUrl;
+
     private GamesManager gamesManager;
     private ServerFacade facade;
-    private final Gson gson = new Gson();
+
+    @BeforeAll
+    static void init() {
+        server = new Server();
+        int port = server.run(0);
+        serverUrl = "http://localhost:" + port;
+        System.out.println("Started test HTTP server on " + port);
+    }
+
+    @AfterAll
+    static void stopServer() {
+        server.stop();
+    }
 
     @BeforeEach
-    void setup() {
-        mockHttpClient = mock(HttpClient.class);
+    void setup() throws Exception {
+        HttpClient.newHttpClient().send(
+            HttpRequest.newBuilder().uri(URI.create(serverUrl + "/db")).DELETE().build(),
+            HttpResponse.BodyHandlers.ofString()
+        );
         gamesManager = new GamesManager(new GameData[0]);
-        facade = new ServerFacade("http://localhost", gamesManager, mockHttpClient);
+        facade = new ServerFacade(serverUrl, gamesManager);
     }
 
-    @SuppressWarnings("unchecked")
-    private void stubResponse(int status, String body) throws Exception {
-        HttpResponse<String> mockResponse = mock(HttpResponse.class);
-        when(mockResponse.statusCode()).thenReturn(status);
-        when(mockResponse.body()).thenReturn(body);
-        doReturn(mockResponse).when(mockHttpClient).send(any(), any());
+    private String registerUser(String username, String password, String email) {
+        System.setIn(new ByteArrayInputStream((username + "\n" + password + "\n" + email + "\n").getBytes()));
+        return facade.register(null, null);
     }
 
-    @SuppressWarnings("unchecked")
-    private void stubResponses(int s1, String b1, int s2, String b2) throws Exception {
-        HttpResponse<String> r1 = mock(HttpResponse.class);
-        when(r1.statusCode()).thenReturn(s1);
-        when(r1.body()).thenReturn(b1);
-        HttpResponse<String> r2 = mock(HttpResponse.class);
-        when(r2.statusCode()).thenReturn(s2);
-        when(r2.body()).thenReturn(b2);
-        doReturn(r1).doReturn(r2).when(mockHttpClient).send(any(), any());
-    }
-
-    private String listGamesJsonWithOneGame() {
-        GameData game = new GameData(1, null, null, "TestGame", new ChessGame());
-        return gson.toJson(new ListGamesResult(new GameData[]{ game }));
+    private void createGame(String authToken, String gameName) {
+        System.setIn(new ByteArrayInputStream((gameName + "\n").getBytes()));
+        facade.createGame(authToken);
     }
 
     @Test
-    void registerPositive() throws Exception {
-        stubResponse(200, "{\"username\":\"user1\",\"authToken\":\"tok1\"}");
-        System.setIn(new ByteArrayInputStream("user1\npassword1\nemail@test.com\n".getBytes()));
-        String authToken = facade.register(null, null);
+    void registerPositive() {
+        String authToken = registerUser("user1", "password1", "email@test.com");
         assertNotNull(authToken);
-        assertEquals("tok1", authToken);
     }
 
     @Test
-    void registerNegative() throws Exception {
-        stubResponse(403, "{\"message\":\"Error: already taken\"}");
-        System.setIn(new ByteArrayInputStream("user1\npassword1\nemail@test.com\n".getBytes()));
-        String authToken = facade.register(null, null);
+    void registerNegative() {
+        registerUser("user1", "password1", "email@test.com");
+        String authToken = registerUser("user1", "password1", "email@test.com");
         assertNull(authToken);
     }
 
     @Test
-    void loginPositive() throws Exception {
-        stubResponse(200, "{\"username\":\"user1\",\"authToken\":\"tok1\"}");
+    void loginPositive() {
+        registerUser("user1", "password1", "email@test.com");
         System.setIn(new ByteArrayInputStream("user1\npassword1\n".getBytes()));
         String authToken = facade.login(null);
         assertNotNull(authToken);
-        assertEquals("tok1", authToken);
     }
 
     @Test
-    void loginNegative() throws Exception {
-        stubResponse(401, "{\"message\":\"Error: unauthorized\"}");
-        System.setIn(new ByteArrayInputStream("user1\nwrongpassword\n".getBytes()));
+    void loginNegative() {
+        System.setIn(new ByteArrayInputStream("nonexistent\nwrongpassword\n".getBytes()));
         String authToken = facade.login(null);
         assertNull(authToken);
     }
 
     @Test
-    void logoutPositive() throws Exception {
-        stubResponse(200, "{}");
-        boolean result = facade.logout("tok1", null, null);
-        assertTrue(result);
+    void logoutPositive() {
+        String authToken = registerUser("user1", "password1", "email@test.com");
+        assertTrue(facade.logout(authToken, null, null));
     }
 
     @Test
-    void logoutNegative() throws Exception {
-        stubResponse(401, "{\"message\":\"Error: unauthorized\"}");
-        boolean result = facade.logout("badtoken", null, null);
-        assertFalse(result);
+    void logoutNegative() {
+        assertFalse(facade.logout("badtoken", null, null));
     }
 
     @Test
-    void listGamesPositive() throws Exception {
-        stubResponse(200, "{\"games\":[]}");
-        assertDoesNotThrow(() -> facade.listGames("tok1"));
+    void listGamesPositive() {
+        String authToken = registerUser("user1", "password1", "email@test.com");
+        assertDoesNotThrow(() -> facade.listGames(authToken));
     }
 
     @Test
-    void listGamesNegative() throws Exception {
-        stubResponse(401, "{\"message\":\"Error: unauthorized\"}");
+    void listGamesNegative() {
         assertDoesNotThrow(() -> facade.listGames("badtoken"));
     }
 
     @Test
-    void createGamePositive() throws Exception {
-        stubResponse(200, "{\"gameID\":1}");
+    void createGamePositive() {
+        String authToken = registerUser("user1", "password1", "email@test.com");
         System.setIn(new ByteArrayInputStream("TestGame\n".getBytes()));
-        assertDoesNotThrow(() -> facade.createGame("tok1"));
+        assertDoesNotThrow(() -> facade.createGame(authToken));
     }
 
     @Test
-    void createGameNegative() throws Exception {
-        stubResponse(401, "{\"message\":\"Error: unauthorized\"}");
+    void createGameNegative() {
         System.setIn(new ByteArrayInputStream("TestGame\n".getBytes()));
         assertDoesNotThrow(() -> facade.createGame("badtoken"));
     }
 
     @Test
-    void observeGamePositive() throws Exception {
-        stubResponse(200, listGamesJsonWithOneGame());
+    void observeGamePositive() {
+        String authToken = registerUser("user1", "password1", "email@test.com");
+        createGame(authToken, "TestGame");
         System.setIn(new ByteArrayInputStream("1\n".getBytes()));
-        assertDoesNotThrow(() -> facade.observeGame("tok1"));
+        assertDoesNotThrow(() -> facade.observeGame(authToken));
     }
 
     @Test
-    void observeGameNegative() throws Exception {
-        stubResponse(401, "{\"message\":\"Error: unauthorized\"}");
+    void observeGameNegative() {
         assertDoesNotThrow(() -> facade.observeGame("badtoken"));
     }
 
     @Test
-    void joinGamePositive() throws Exception {
-        stubResponses(200, listGamesJsonWithOneGame(), 200, "{\"success\":true}");
+    void joinGamePositive() {
+        String authToken = registerUser("user1", "password1", "email@test.com");
+        createGame(authToken, "TestGame");
         System.setIn(new ByteArrayInputStream("1\nWHITE\n".getBytes()));
-        assertDoesNotThrow(() -> facade.joinGame("tok1"));
+        assertDoesNotThrow(() -> facade.joinGame(authToken));
     }
 
     @Test
-    void joinGameNegative() throws Exception {
-        stubResponse(401, "{\"message\":\"Error: unauthorized\"}");
+    void joinGameNegative() {
         assertDoesNotThrow(() -> facade.joinGame("badtoken"));
     }
 }
