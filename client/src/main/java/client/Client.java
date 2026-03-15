@@ -23,6 +23,10 @@ import routers.CreateGameRouter.CreateGameOutcome;
 
 import routers.ObserveGameRouter;
 
+import chess.ChessGame.TeamColor;
+
+import routers.JoinGameRouter;
+
 public class Client {
 
     private String serverUrl;
@@ -35,6 +39,7 @@ public class Client {
     private ListGamesRouter listGamesRouter;
     private CreateGameRouter createGameRouter;
     private ObserveGameRouter observeGameRouter;
+    private JoinGameRouter joinGameRouter;
 
     private Gson gson;
     private HttpClient client;
@@ -55,6 +60,7 @@ public class Client {
         this.listGamesRouter = new ListGamesRouter(serverUrl, gson, client);
         this.createGameRouter = new CreateGameRouter(serverUrl, gson, client);
         this.observeGameRouter = new ObserveGameRouter(gamesManager);
+        this.joinGameRouter = new JoinGameRouter(gamesManager, serverUrl, gson, client);
     }
 
     public Client(String serverUrl, Gson gson) {
@@ -97,6 +103,7 @@ public class Client {
                 System.out.println("Could not login. Did you enter the right username and password?");
             }
         }));
+
         this.prelogin.addOption(new MenuOption("Register", () -> {
             RegisterOutcome outcome = this.registerRouter.doRegister();
             if (outcome instanceof RegisterOutcome.Success) {
@@ -116,6 +123,7 @@ public class Client {
                 System.out.println("Could not create game. Did you enter a valid name?");
             }
         }));
+
         this.postlogin.addOption(new MenuOption("List all Chess Games available", () -> {
             ListGamesOutcome outcome = this.listGamesRouter.doListGames(this.authToken);
             if (outcome instanceof ListGamesOutcome.Success) {
@@ -126,9 +134,18 @@ public class Client {
                 System.out.println("No games available");
             }
         }));
+
         this.postlogin.addOption(new MenuOption("Join and begin playing a pre-existing Chess Game", () -> {
-            System.out.println("Join and begin playing a pre-existing Chess Game");
+            ListGamesOutcome outcome = this.listGamesRouter.doListGames(this.authToken);
+            if (outcome instanceof ListGamesOutcome.Success) {
+                gamesManager.setGames(((ListGamesOutcome.Success) outcome).games());
+            } else {
+                System.out.println("No games available");
+                return;
+            }
+            joinGameRouter.doJoinGame(this.authToken);
         }));
+
         this.postlogin.addOption(new MenuOption("Observe a pre-existing Chess Game, but not participate in it", () -> {
             ListGamesOutcome outcome = this.listGamesRouter.doListGames(this.authToken);
             if (outcome instanceof ListGamesOutcome.Success) {
@@ -137,7 +154,7 @@ public class Client {
                 System.out.println("No games available");
                 return;
             }
-            observeGameRouter.doObserveGame(this.authToken);
+            observeGameRouter.doObserveGame(TeamColor.WHITE);
         }));
     }
 

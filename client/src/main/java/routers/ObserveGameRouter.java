@@ -16,7 +16,7 @@ public class ObserveGameRouter {
         this.gamesManager = gamesManager;
     }
 
-    public void doObserveGame(String authToken) {
+    public void doObserveGame(TeamColor teamColor) {
         gamesManager.printGames();
 
         @SuppressWarnings("resource")
@@ -29,6 +29,6 @@ public class ObserveGameRouter {
             return;
         }
 
-        ChessPrinter.printBoard(game.game().getBoard(), TeamColor.WHITE);
+        ChessPrinter.printBoard(game.game().getBoard(), teamColor);
     }
 }
