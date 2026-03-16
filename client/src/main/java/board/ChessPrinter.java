@@ -32,7 +32,14 @@ public class ChessPrinter {
     System.out.println(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + "   " + letters + "   " + EscapeSequences.RESET_BG_COLOR);
     }
 
-    private static void printWholeRow(ChessBoard board, String[] numbers, int row, String currentColor, String teamTextColor, String oponentTextColor) {
+    private static void printWholeRow(
+        ChessBoard board, 
+        String[] numbers, 
+        int row, 
+        String currentColor, 
+        String teamTextColor, 
+        String oponentTextColor
+    ) {
         System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + " " + numbers[row - 1] + " " + EscapeSequences.RESET_BG_COLOR);
         System.out.print(printRow(board, row, currentColor, teamTextColor, oponentTextColor));
         System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + " " + numbers[row - 1] + " " + EscapeSequences.RESET_BG_COLOR);
