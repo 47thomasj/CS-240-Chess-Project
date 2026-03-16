@@ -50,7 +50,12 @@ public class JoinGameRouter {
         TeamColor teamColor = null;
         if (game.blackUsername() == null && game.whiteUsername() == null) {
             System.out.print("Enter which color you want to play as (WHITE or BLACK): ");
-            teamColor = TeamColor.valueOf(scanner.nextLine().toUpperCase());
+            String color = scanner.nextLine().toUpperCase();
+            if (!color.equals("WHITE") && !color.equals("BLACK")) {
+                System.out.println("Invalid color");
+                return;
+            }
+            teamColor = TeamColor.valueOf(color);
         } else if (game.blackUsername() == null) {
             teamColor = TeamColor.BLACK;
         } else if (game.whiteUsername() == null) {
