@@ -8,6 +8,7 @@ public class Client {
     private String serverUrl;
     private Menu prelogin;
     private Menu postlogin;
+    private Menu gameplay;
 
     private ServerFacade serverFacade;
 
@@ -38,6 +39,15 @@ public class Client {
         + "\n5. Logout of your account"
         + "\n6. Display this help message again";
 
+        String gameplayHelpString = "This is the gameplay menu. You can select an option by entering the number of the option."
+        + "\n\nOptions:"
+        + "\n1. Redraw the chess board"
+        + "\n2. Leave the game"
+        + "\n3. Make a move"
+        + "\n4. Resign (you lose the game)"
+        + "\n5. Highlight the moves a chosen piece can make"
+        + "\n6. Display this help message again";
+
         this.prelogin = new Menu("Quit", () -> System.exit(0), preLoginHelpString, "Welcome to the Chess Game!");
         this.postlogin = new Menu("Logout", () -> {
             boolean outcome = serverFacade.logout(this.authToken, this.prelogin, this.postlogin);
@@ -48,6 +58,9 @@ public class Client {
                 this.postlogin.interactWithMenu();
             }
         }, postLoginHelpString, "You are now logged in. Welcome!");
+        this.gameplay = new Menu("Leave", () -> {
+            this.postlogin.interactWithMenu();
+        }, gameplayHelpString, "Enjoy the match!");
 
         this.prelogin.addOption(new MenuOption("Login", () -> {
             String outcome = serverFacade.login(this.postlogin);
