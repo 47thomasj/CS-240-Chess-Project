@@ -30,6 +30,7 @@ public class Server {
         LoginHandler loginHandler = new LoginHandler(gson, userService);
         LogoutHandler logoutHandler = new LogoutHandler(gson, userService);
         RegisterHandler registerHandler = new RegisterHandler(gson, userService);
+        WebSocketHandler webSocketHandler = new WebSocketHandler();
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
@@ -40,6 +41,8 @@ public class Server {
         javalin.get("/game", listGamesHandler);
         javalin.post("/game", createGamesHandler);
         javalin.put("/game", joinGameHandler);
+        javalin.ws("/ws", webSocketHandler);
+        // Websocket endpoint for game here? Do I need a dedicated WS handler/service??
 
     }
 

@@ -69,6 +69,7 @@ public class JoinGameRouter {
             System.out.println("Joined game successfully");
             gamesManager.setCurrentGame(game.game());
             gamesManager.setCurrentTeamColor(teamColor);
+            // Open websocket connection here?
             return teamColor;
         } else {
             System.out.println("Could not join game. Did you enter a valid color?");
