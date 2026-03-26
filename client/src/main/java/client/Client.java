@@ -3,6 +3,8 @@ package client;
 import menu.Menu;
 import menu.MenuOption;
 
+import board.ChessPrinter;
+
 public class Client {
 
     private String serverUrl;
@@ -85,6 +87,9 @@ public class Client {
             "Observe a pre-existing Chess Game, but not participate in it", 
             () -> serverFacade.observeGame(this.authToken))
         );
+        
+        this.gameplay.addOption(new MenuOption("Redraw the chess board", () -> ChessPrinter.printBoard(this.gamesManager.getCurrentGame().getBoard(), this.gamesManager.getCurrentTeamColor())));
+        
     }
 
     public void run() {
