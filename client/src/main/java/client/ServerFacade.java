@@ -23,7 +23,7 @@ import routers.ObserveGameRouter;
 import chess.ChessGame.TeamColor;
 
 import routers.JoinGameRouter;
-
+import routers.WebSocketRouter;
 import menu.Menu;
 
 public class ServerFacade {
@@ -39,6 +39,7 @@ public class ServerFacade {
     private final CreateGameRouter createGameRouter;
     private final ObserveGameRouter observeGameRouter;
     private final JoinGameRouter joinGameRouter;
+    private final WebSocketRouter webSocketRouter;
 
     public ServerFacade(String serverUrl, GamesManager gamesManager) {
         this(serverUrl, gamesManager, HttpClient.newHttpClient());
@@ -55,6 +56,7 @@ public class ServerFacade {
         this.createGameRouter = new CreateGameRouter(serverUrl, gson, client);
         this.observeGameRouter = new ObserveGameRouter(gamesManager);
         this.joinGameRouter = new JoinGameRouter(gamesManager, serverUrl, gson, client);
+        this.webSocketRouter = new WebSocketRouter(serverUrl, gson, client);
     }
 
     public String register(Menu prelogin, Menu postlogin) {
@@ -121,20 +123,22 @@ public class ServerFacade {
         }
     }
 
-    public TeamColor joinGame(String authToken, Menu gameplay) {
+    public void joinGame(String authToken, Menu gameplay) {
         ListGamesOutcome outcome = this.listGamesRouter.doListGames(authToken);
         if (outcome instanceof ListGamesOutcome.Success) {
             gamesManager.setGames(((ListGamesOutcome.Success) outcome).games());
         } else {
             System.out.println("No games available");
-            return null;
+            return;
         }
-        TeamColor teamColor = joinGameRouter.doJoinGame(authToken);
-        if (teamColor != null) {
+        int gameID = joinGameRouter.doJoinGame(authToken);
+        if (gameID != -1) {
+            webSocketRouter.connect(authToken, gameID);
             gameplay.interactWithMenu();
-            return teamColor;
+            return;
         } else {
-            return null;
+            System.out.println("Could not join game. Did you enter a valid game ID?");
+            return;
         }
     }
 }

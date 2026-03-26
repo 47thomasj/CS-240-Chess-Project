@@ -31,7 +31,7 @@ public class JoinGameRouter {
         this.client = client;
     }
 
-    public TeamColor doJoinGame(String authToken) {
+    public int doJoinGame(String authToken) {
         gamesManager.printGames();
 
         @SuppressWarnings("resource")
@@ -43,7 +43,7 @@ public class JoinGameRouter {
 
         if (game == null) {
             System.out.println("Game not found");
-            return null;
+            return -1;
         }
 
         TeamColor teamColor = null;
@@ -52,7 +52,7 @@ public class JoinGameRouter {
             String color = scanner.nextLine().toUpperCase();
             if (!color.equals("WHITE") && !color.equals("BLACK")) {
                 System.out.println("Invalid color");
-                return null;
+                return -1;
             }
             teamColor = TeamColor.valueOf(color);
         } else if (game.blackUsername() == null) {
@@ -61,7 +61,7 @@ public class JoinGameRouter {
             teamColor = TeamColor.WHITE;
         } else {
             System.out.println("Game is already full");
-            return null;
+            return -1;
         }
         
         JoinOutcome outcome = joinGame(game.gameID(), teamColor, authToken);
@@ -69,11 +69,10 @@ public class JoinGameRouter {
             System.out.println("Joined game successfully");
             gamesManager.setCurrentGame(game.game());
             gamesManager.setCurrentTeamColor(teamColor);
-            // Open websocket connection here?
-            return teamColor;
+            return game.gameID();
         } else {
             System.out.println("Could not join game. Did you enter a valid color?");
-            return null;
+            return -1;
         }
     }
 
