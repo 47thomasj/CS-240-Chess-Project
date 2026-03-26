@@ -26,9 +26,7 @@ public class UserGameCommand {
         CONNECT,
         MAKE_MOVE,
         LEAVE,
-        RESIGN,
-        HIGHLIGHT,
-        REDRAW
+        RESIGN
     }
 
     public CommandType getCommandType() {
@@ -49,8 +47,6 @@ public class UserGameCommand {
             case MAKE_MOVE -> executeMakeMove();
             case LEAVE -> executeLeave();
             case RESIGN -> executeResign();
-            case HIGHLIGHT -> executeHighlight();
-            case REDRAW -> executeRedraw();
             default -> false;
         };
     }
@@ -68,14 +64,6 @@ public class UserGameCommand {
     }
 
     private boolean executeResign() {
-        return true;
-    }
-
-    private boolean executeHighlight() {
-        return true;
-    }
-
-    private boolean executeRedraw() {
         return true;
     }
 
