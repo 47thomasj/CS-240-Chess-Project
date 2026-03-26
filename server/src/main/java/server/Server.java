@@ -41,8 +41,7 @@ public class Server {
         javalin.get("/game", listGamesHandler);
         javalin.post("/game", createGamesHandler);
         javalin.put("/game", joinGameHandler);
-        javalin.ws("/ws", webSocketHandler);
-        // Websocket endpoint for game here? Do I need a dedicated WS handler/service??
+        javalin.ws("/ws", webSocketHandler::configure);
 
     }
 
