@@ -26,7 +26,9 @@ public class UserGameCommand {
         CONNECT,
         MAKE_MOVE,
         LEAVE,
-        RESIGN
+        RESIGN,
+        HIGHLIGHT,
+        REDRAW
     }
 
     public CommandType getCommandType() {
@@ -39,6 +41,42 @@ public class UserGameCommand {
 
     public Integer getGameID() {
         return gameID;
+    }
+
+    public boolean execute() {
+        return switch (this.commandType) {
+            case CONNECT -> executeConnect();
+            case MAKE_MOVE -> executeMakeMove();
+            case LEAVE -> executeLeave();
+            case RESIGN -> executeResign();
+            case HIGHLIGHT -> executeHighlight();
+            case REDRAW -> executeRedraw();
+            default -> false;
+        };
+    }
+
+    private boolean executeConnect() {
+        return true;
+    }
+
+    private boolean executeMakeMove() {
+        return true;
+    }
+
+    private boolean executeLeave() {
+        return true;
+    }
+
+    private boolean executeResign() {
+        return true;
+    }
+
+    private boolean executeHighlight() {
+        return true;
+    }
+
+    private boolean executeRedraw() {
+        return true;
     }
 
     @Override

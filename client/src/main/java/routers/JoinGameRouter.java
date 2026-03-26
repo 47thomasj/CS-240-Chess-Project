@@ -4,7 +4,6 @@ import java.util.Scanner;
 
 import models.GameData;
 
-import board.ChessPrinter;
 import chess.ChessGame.TeamColor;
 
 import client.GamesManager;
@@ -32,7 +31,7 @@ public class JoinGameRouter {
         this.client = client;
     }
 
-    public void doJoinGame(String authToken) {
+    public TeamColor doJoinGame(String authToken) {
         gamesManager.printGames();
 
         @SuppressWarnings("resource")
@@ -44,7 +43,7 @@ public class JoinGameRouter {
 
         if (game == null) {
             System.out.println("Game not found");
-            return;
+            return null;
         }
 
         TeamColor teamColor = null;
@@ -53,7 +52,7 @@ public class JoinGameRouter {
             String color = scanner.nextLine().toUpperCase();
             if (!color.equals("WHITE") && !color.equals("BLACK")) {
                 System.out.println("Invalid color");
-                return;
+                return null;
             }
             teamColor = TeamColor.valueOf(color);
         } else if (game.blackUsername() == null) {
@@ -62,17 +61,17 @@ public class JoinGameRouter {
             teamColor = TeamColor.WHITE;
         } else {
             System.out.println("Game is already full");
-            return;
+            return null;
         }
         
         JoinOutcome outcome = joinGame(game.gameID(), teamColor, authToken);
         if (outcome instanceof JoinOutcome.Success) {
             System.out.println("Joined game successfully");
+            return teamColor;
         } else {
             System.out.println("Could not join game. Did you enter a valid color?");
+            return null;
         }
-
-        ChessPrinter.printBoard(game.game().getBoard(), teamColor);
     }
 
     private JoinOutcome joinGame(int gameID, TeamColor teamColor, String authToken) {

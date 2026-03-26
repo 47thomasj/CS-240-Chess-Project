@@ -121,14 +121,20 @@ public class ServerFacade {
         }
     }
 
-    public void joinGame(String authToken) {
+    public TeamColor joinGame(String authToken, Menu gameplay) {
         ListGamesOutcome outcome = this.listGamesRouter.doListGames(authToken);
         if (outcome instanceof ListGamesOutcome.Success) {
             gamesManager.setGames(((ListGamesOutcome.Success) outcome).games());
         } else {
             System.out.println("No games available");
-            return;
+            return null;
         }
-        joinGameRouter.doJoinGame(authToken);
+        TeamColor teamColor = joinGameRouter.doJoinGame(authToken);
+        if (teamColor != null) {
+            gameplay.interactWithMenu();
+            return teamColor;
+        } else {
+            return null;
+        }
     }
 }
