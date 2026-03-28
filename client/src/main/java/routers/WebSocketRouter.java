@@ -15,7 +15,7 @@ public class WebSocketRouter {
     private final String wsUrl;
     private final WebSocketContainer webSocketContainer;
     private Session session;
-
+    private final Gson gson;
     /**
      * Optional callback invoked for every server message received after the
      * initial CONNECT handshake completes.  Set this before calling connect().
@@ -26,6 +26,7 @@ public class WebSocketRouter {
         this.wsUrl = "ws://localhost:8080/ws";
         this.webSocketContainer = webSocketContainer;
         this.session = null;
+        this.gson = gson;
     }
 
     public void setMessageHandler(Consumer<String> handler) {
@@ -53,7 +54,7 @@ public class WebSocketRouter {
         if (session == null) {
             throw new Exception("Not connected to a server");
         }
-        session.getBasicRemote().sendObject(command);
+        session.getBasicRemote().sendText(gson.toJson(command));
     }
 
     public void close() throws Exception {

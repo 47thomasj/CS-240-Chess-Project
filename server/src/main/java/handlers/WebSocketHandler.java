@@ -40,7 +40,7 @@ public class WebSocketHandler {
             }
             case MAKE_MOVE -> onMakeMove(command);
             case LEAVE -> onLeave(command);
-            case RESIGN -> onResign(ctx);
+            case RESIGN -> onResign(command);
         }
     }
 
@@ -60,6 +60,10 @@ public class WebSocketHandler {
         } catch (DataAccessException e) {
             System.out.println("Error leaving game: " + e.getMessage());
         }
+    }
+
+    private void onResign(UserGameCommand command) {
+        System.out.println("Resigning game: " + command.getGameID());
     }
 
     private void onError(WsErrorContext ctx) {

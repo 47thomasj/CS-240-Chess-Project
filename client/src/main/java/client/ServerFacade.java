@@ -21,6 +21,7 @@ import routers.CreateGameRouter.CreateGameOutcome;
 import routers.ObserveGameRouter;
 
 import routers.JoinGameRouter;
+
 import routers.WebSocketRouter;
 
 import chess.ChessGame.TeamColor;
@@ -155,6 +156,7 @@ public class ServerFacade {
     public void leaveGame(String authToken, int gameID, Menu postlogin) {
         try {
             UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID);
+            webSocketRouter.send(command);
             webSocketRouter.close();
             postlogin.interactWithMenu();
         } catch (Exception e) {
