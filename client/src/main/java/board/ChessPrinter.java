@@ -33,11 +33,30 @@ public class ChessPrinter {
 
         @SuppressWarnings("resource")
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter the row of the piece to get legal moves for: ");
-        int row = scanner.nextInt();
-        System.out.print("Enter the column of the piece to get legal moves for: ");
-        String colLetter = scanner.next();
-        int col = letterToColNumber.get(colLetter);
+        int row = -1;
+        int col = -1;
+
+        while (col == -1) {
+            System.out.print("Enter the column of the piece to get legal moves for (a-h): ");
+            String colLetter = scanner.next();
+            colLetter = colLetter.toLowerCase();
+            if (!letterToColNumber.containsKey(colLetter)) {
+                System.out.println("Invalid column. Please enter a valid column (a-h).");
+                continue;
+            }
+            col = letterToColNumber.get(colLetter);
+        }
+
+        while (row == -1) {
+            System.out.print("Enter the row of the piece to get legal moves for (1-8): ");
+            row = scanner.nextInt();
+            if (row < 1 || row > 8) {
+                System.out.println("Invalid row. Please enter a valid row (1-8).");
+                row = -1;
+                continue;
+            }
+        }
+
         ChessPosition position = new ChessPosition(row, col);
 
         ChessPiece piece = board.getPiece(position);
@@ -134,7 +153,7 @@ public class ChessPrinter {
         TeamColor colorAtPosition = pieceAtPosition != null ? pieceAtPosition.getTeamColor() : null;
         String textColor = colorAtPosition == TeamColor.WHITE ? teamTextColor : oponentTextColor;
         if (positionsToHighlight.contains(position)) {
-            currentColor = colorAtPosition == TeamColor.WHITE ? EscapeSequences.SET_BG_COLOR_GREEN : EscapeSequences.SET_BG_COLOR_DARK_GREEN;
+            currentColor = currentColor == EscapeSequences.SET_BG_COLOR_WHITE ? EscapeSequences.SET_BG_COLOR_GREEN : EscapeSequences.SET_BG_COLOR_DARK_GREEN;
         } else if (position.equals(rootPosition)) {
             currentColor = EscapeSequences.SET_BG_COLOR_YELLOW;
         }
