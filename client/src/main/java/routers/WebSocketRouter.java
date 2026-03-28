@@ -7,9 +7,9 @@ import com.google.gson.Gson;
 
 import websocket.commands.UserGameCommand;
 
-import jakarta.websocket.WebSocketContainer;
-import jakarta.websocket.Session;
+import jakarta.websocket.*;
 
+@ClientEndpoint
 public class WebSocketRouter {
 
     private final String wsUrl;
@@ -33,9 +33,7 @@ public class WebSocketRouter {
     }
 
     /**
-     * Opens a WebSocket connection, sends a CONNECT command, and blocks until
-     * the server responds with LOAD_GAME (success) or an ERROR (failure).
-     *
+     * 
      * @return true if the server acknowledged the connection with LOAD_GAME
      */
     public boolean connect(String authToken, int gameID) throws Exception {
@@ -46,7 +44,7 @@ public class WebSocketRouter {
             throw new IllegalArgumentException("gameID must be > 0");
         }
 
-        URI uri = URI.create(wsUrl + "/ws");
+        URI uri = URI.create(wsUrl);
         this.session = webSocketContainer.connectToServer(this, uri);
         return true;
     }
@@ -65,17 +63,20 @@ public class WebSocketRouter {
         session.close();
     }
 
+    @OnMessage
     public void onMessage(String message) {
         if (messageHandler != null) {
             messageHandler.accept(message);
         }
     }
     
+    @OnError
     public void onError(Throwable t) {
         System.err.println("Error: " + t.getMessage());
     }
 
-    public void onClose(int statusCode, String reason) {
-        System.out.println("Closed: " + statusCode + " " + reason);
+    @OnClose
+    public void onClose(CloseReason reason) {
+        System.out.println("Closed: " + reason.getCloseCode() + " " + reason.getReasonPhrase());
     }
 }

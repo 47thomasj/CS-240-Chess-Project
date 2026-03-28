@@ -25,6 +25,6 @@ public class WebSocketHandler {
     }
 
     private void onClose(WsCloseContext ctx) {
-        ctx.reason();
+        System.out.println("WebSocket closed");
     }
 }
