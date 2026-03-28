@@ -14,6 +14,7 @@ import models.results.JoinGameResult;
 import models.results.ListGamesResult;
 import models.requests.LeaveGameRequest;
 import models.results.LeaveGameResult;
+import chess.ChessGame.TeamColor;
 
 import java.util.Objects;
 
@@ -84,6 +85,22 @@ public class GameService {
         String blackUsername = Objects.equals(game.blackUsername(), authData.username()) ? null : game.blackUsername();
         GameData updatedGame = new GameData(request.gameID(), whiteUsername, blackUsername, game.gameName(), game.game());
         
+        gameDAO.updateGame(updatedGame);
+        return new LeaveGameResult(true);
+    }
+
+    public LeaveGameResult resignGame(LeaveGameRequest request) throws DataAccessException {
+        authDAO.readAuth(request.authToken());
+
+        boolean isBadGameID = request.gameID() == null || request.gameID() <= 0;
+        if (isBadGameID) {
+            throw new DataAccessException("Error: bad request");
+        }
+
+        GameData game = gameDAO.readGame(request.gameID());
+        game.game().setTeamTurn(TeamColor.NONE);
+        GameData updatedGame = new GameData(request.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), game.game());
+
         gameDAO.updateGame(updatedGame);
         return new LeaveGameResult(true);
     }

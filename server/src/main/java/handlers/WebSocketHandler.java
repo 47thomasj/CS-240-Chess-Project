@@ -63,7 +63,17 @@ public class WebSocketHandler {
     }
 
     private void onResign(UserGameCommand command) {
-        System.out.println("Resigning game: " + command.getGameID());
+        try {
+            LeaveGameRequest request = new LeaveGameRequest(command.getAuthToken(), command.getGameID());
+            LeaveGameResult result = gameService.resignGame(request);
+            if (result.success()) {
+                System.out.println("Successfully resigned game: " + command.getGameID());
+            } else {
+                System.out.println("Failed to resign game: " + command.getGameID());
+            }
+        } catch (DataAccessException e) {
+            System.out.println("Error resigning game: " + e.getMessage());
+        }
     }
 
     private void onError(WsErrorContext ctx) {
