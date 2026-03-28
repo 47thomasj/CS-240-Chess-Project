@@ -4,13 +4,19 @@ import io.javalin.websocket.*;
 import websocket.commands.UserGameCommand;
 import com.google.gson.Gson;
 
+import service.GameService;
+import models.requests.LeaveGameRequest;
+import models.results.LeaveGameResult;
+import dataaccess.DataAccessException;
 
 public class WebSocketHandler {
 
     private final Gson gson;
+    private final GameService gameService;
 
-    public WebSocketHandler(Gson gson) {
+    public WebSocketHandler(Gson gson, GameService gameService) {
         this.gson = gson;
+        this.gameService = gameService;
     }
 
     public void configure(WsConfig wsConfig) {
@@ -33,13 +39,27 @@ public class WebSocketHandler {
                 ctx.enableAutomaticPings();
             }
             case MAKE_MOVE -> onMakeMove(command);
-            case LEAVE -> onLeave(ctx);
+            case LEAVE -> onLeave(command);
             case RESIGN -> onResign(ctx);
         }
     }
 
     private void onMakeMove(UserGameCommand command) {
-        
+        System.out.println("Making move: " + command.getGameID());
+    }
+
+    private void onLeave(UserGameCommand command) {
+        try {
+            LeaveGameRequest request = new LeaveGameRequest(command.getAuthToken(), command.getGameID());
+            LeaveGameResult result = gameService.leaveGame(request);
+            if (result.success()) {
+                System.out.println("Successfully left game: " + command.getGameID());
+            } else {
+                System.out.println("Failed to leave game: " + command.getGameID());
+            }
+        } catch (DataAccessException e) {
+            System.out.println("Error leaving game: " + e.getMessage());
+        }
     }
 
     private void onError(WsErrorContext ctx) {

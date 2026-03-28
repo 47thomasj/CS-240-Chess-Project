@@ -12,6 +12,8 @@ import models.requests.ListGamesRequest;
 import models.results.CreateGameResult;
 import models.results.JoinGameResult;
 import models.results.ListGamesResult;
+import models.requests.LeaveGameRequest;
+import models.results.LeaveGameResult;
 
 import java.util.Objects;
 
@@ -69,12 +71,20 @@ public class GameService {
         return new JoinGameResult(true);
     }
 
-    public void leaveGame(LeaveGameRequest request) throws DataAccessException {
+    public LeaveGameResult leaveGame(LeaveGameRequest request) throws DataAccessException {
         AuthData authData = authDAO.readAuth(request.authToken());
 
         boolean isBadGameID = request.gameID() == null || request.gameID() <= 0;
         if (isBadGameID) {
             throw new DataAccessException("Error: bad request");
         }
+
+        GameData game = gameDAO.readGame(request.gameID());
+        String whiteUsername = Objects.equals(game.whiteUsername(), authData.username()) ? null : game.whiteUsername();
+        String blackUsername = Objects.equals(game.blackUsername(), authData.username()) ? null : game.blackUsername();
+        GameData updatedGame = new GameData(request.gameID(), whiteUsername, blackUsername, game.gameName(), game.game());
+        
+        gameDAO.updateGame(updatedGame);
+        return new LeaveGameResult(true);
     }
 }
