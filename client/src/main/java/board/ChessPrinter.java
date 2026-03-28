@@ -9,6 +9,9 @@ import chess.ChessMove;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
+import java.util.Scanner;
+
+import java.util.HashMap;
 
 
 public class ChessPrinter {
@@ -17,7 +20,26 @@ public class ChessPrinter {
         printBoardWithHighlights(board, teamColor, new ArrayList<>(), null);
     }
 
-    public static void printLegalMoves(ChessBoard board, ChessPosition position, TeamColor teamColor) {
+    public static void printLegalMoves(ChessBoard board, TeamColor teamColor) {
+        HashMap<String, Integer> letterToColNumber = new HashMap<>();
+        letterToColNumber.put("a", 1);
+        letterToColNumber.put("b", 2);
+        letterToColNumber.put("c", 3);
+        letterToColNumber.put("d", 4);
+        letterToColNumber.put("e", 5);
+        letterToColNumber.put("f", 6);
+        letterToColNumber.put("g", 7);
+        letterToColNumber.put("h", 8);
+
+        @SuppressWarnings("resource")
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the row of the piece to get legal moves for: ");
+        int row = scanner.nextInt();
+        System.out.print("Enter the column of the piece to get legal moves for: ");
+        String colLetter = scanner.next();
+        int col = letterToColNumber.get(colLetter);
+        ChessPosition position = new ChessPosition(row, col);
+
         ChessPiece piece = board.getPiece(position);
         if (piece == null) {
             printBoard(board, teamColor);

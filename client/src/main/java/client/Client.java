@@ -89,6 +89,7 @@ public class Client {
         );
         
         this.gameplay.addOption(new MenuOption("Redraw the chess board", () -> ChessPrinter.printBoard(this.gamesManager.getCurrentGame().getBoard(), this.gamesManager.getCurrentTeamColor())));
+        this.gameplay.addOption(new MenuOption("Highlight the moves a chosen piece can make", () -> ChessPrinter.printLegalMoves(this.gamesManager.getCurrentGame().getBoard(), this.gamesManager.getCurrentTeamColor())));
         
     }
 
