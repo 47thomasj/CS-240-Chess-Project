@@ -28,7 +28,7 @@ public class ChessPrinter {
         printBoardWithHighlights(board, teamColor, positionsToHighlight, position);
     }
     
-    public static void printBoardWithHighlights(ChessBoard board, TeamColor teamColor, Collection<ChessPosition> positionsToHighlight, ChessPosition rootPosition) {
+    private static void printBoardWithHighlights(ChessBoard board, TeamColor teamColor, Collection<ChessPosition> positionsToHighlight, ChessPosition rootPosition) {
     String letters = teamColor == TeamColor.WHITE ? " a  b  c  d  e  f  g  h " : " h  g  f  e  d  c  b  a ";
 
     String[] numbers = new String[] {"1", "2", "3", "4", "5", "6", "7", "8"};
