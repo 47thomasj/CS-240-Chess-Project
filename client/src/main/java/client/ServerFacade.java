@@ -20,11 +20,14 @@ import routers.CreateGameRouter.CreateGameOutcome;
 
 import routers.ObserveGameRouter;
 
-import chess.ChessGame.TeamColor;
-import jakarta.websocket.ContainerProvider;
-import jakarta.websocket.WebSocketContainer;
 import routers.JoinGameRouter;
 import routers.WebSocketRouter;
+
+import chess.ChessGame.TeamColor;
+import websocket.commands.UserGameCommand;
+import jakarta.websocket.ContainerProvider;
+import jakarta.websocket.WebSocketContainer;
+
 import menu.Menu;
 
 public class ServerFacade {
@@ -136,6 +139,7 @@ public class ServerFacade {
         if (gameID != -1) {
             try {
                 webSocketRouter.connect(authToken, gameID);
+                gamesManager.setCurrentGameID(gameID);
             } catch (Exception e) {
                 System.out.println("Could not connect to game. " + e.getMessage());
                 return;
@@ -148,8 +152,9 @@ public class ServerFacade {
         }
     }
 
-    public void leaveGame(Menu postlogin) {
+    public void leaveGame(String authToken, int gameID, Menu postlogin) {
         try {
+            UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID);
             webSocketRouter.close();
             postlogin.interactWithMenu();
         } catch (Exception e) {

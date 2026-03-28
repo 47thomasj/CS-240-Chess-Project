@@ -6,17 +6,27 @@ import chess.ChessGame.TeamColor;
 
 public class GamesManager {
     private GameData[] games;
+    private int currentGameID;
     private ChessGame currentGame;
     private TeamColor currentTeamColor;
 
     public GamesManager(GameData[] games) {
         this.games = games;
+        this.currentGameID = -1;
         this.currentGame = null;
         this.currentTeamColor = null;
     }
 
     public void setGames(GameData[] games) {
         this.games = games;
+    }
+
+    public void setCurrentGameID(int currentGameID) {
+        this.currentGameID = currentGameID;
+    }
+
+    public int getCurrentGameID() {
+        return currentGameID;
     }
 
     public void setCurrentGame(ChessGame currentGame) {

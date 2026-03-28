@@ -61,7 +61,7 @@ public class Client {
             }
         }, postLoginHelpString, "You are now logged in. Welcome!");
         this.gameplay = new Menu("Leave", () -> {
-            serverFacade.leaveGame(this.postlogin);
+            serverFacade.leaveGame(this.authToken, this.gamesManager.getCurrentGameID(), this.postlogin);
         }, gameplayHelpString, "Enjoy the match!");
 
         this.prelogin.addOption(new MenuOption("Login", () -> {
