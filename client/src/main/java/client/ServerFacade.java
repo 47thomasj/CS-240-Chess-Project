@@ -21,7 +21,8 @@ import routers.CreateGameRouter.CreateGameOutcome;
 import routers.ObserveGameRouter;
 
 import chess.ChessGame.TeamColor;
-
+import jakarta.websocket.ContainerProvider;
+import jakarta.websocket.WebSocketContainer;
 import routers.JoinGameRouter;
 import routers.WebSocketRouter;
 import menu.Menu;
@@ -42,10 +43,10 @@ public class ServerFacade {
     private final WebSocketRouter webSocketRouter;
 
     public ServerFacade(String serverUrl, GamesManager gamesManager) {
-        this(serverUrl, gamesManager, HttpClient.newHttpClient());
+        this(serverUrl, gamesManager, HttpClient.newHttpClient(), ContainerProvider.getWebSocketContainer());
     }
 
-    public ServerFacade(String serverUrl, GamesManager gamesManager, HttpClient client) {
+    public ServerFacade(String serverUrl, GamesManager gamesManager, HttpClient client, WebSocketContainer webSocketContainer) {
         this.gson = new Gson();
         this.gamesManager = gamesManager;
 
@@ -56,7 +57,7 @@ public class ServerFacade {
         this.createGameRouter = new CreateGameRouter(serverUrl, gson, client);
         this.observeGameRouter = new ObserveGameRouter(gamesManager);
         this.joinGameRouter = new JoinGameRouter(gamesManager, serverUrl, gson, client);
-        this.webSocketRouter = new WebSocketRouter(serverUrl, gson, client);
+        this.webSocketRouter = new WebSocketRouter(gson, webSocketContainer);
     }
 
     public String register(Menu prelogin, Menu postlogin) {
@@ -133,7 +134,12 @@ public class ServerFacade {
         }
         int gameID = joinGameRouter.doJoinGame(authToken);
         if (gameID != -1) {
-            webSocketRouter.connect(authToken, gameID);
+            try {
+                webSocketRouter.connect(authToken, gameID);
+            } catch (Exception e) {
+                System.out.println("Could not connect to game. " + e.getMessage());
+                return;
+            }
             gameplay.interactWithMenu();
             return;
         } else {
