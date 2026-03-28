@@ -164,4 +164,16 @@ public class ServerFacade {
             return;
         }
     }
+
+    public void resignGame(String authToken, int gameID, Menu postlogin) {
+        try {
+            UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, gameID);
+            webSocketRouter.send(command);
+            webSocketRouter.close();
+            postlogin.interactWithMenu();
+        } catch (Exception e) {
+            System.out.println("Could not resign game. " + e.getMessage());
+            return;
+        }
+    }
 }
