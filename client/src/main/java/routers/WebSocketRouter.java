@@ -74,9 +74,4 @@ public class WebSocketRouter {
     public void onError(Throwable t) {
         System.err.println("Error: " + t.getMessage());
     }
-
-    @OnClose
-    public void onClose(CloseReason reason) {
-        System.out.println("Closed: " + reason.getCloseCode() + " " + reason.getReasonPhrase());
-    }
 }

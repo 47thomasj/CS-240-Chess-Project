@@ -147,4 +147,14 @@ public class ServerFacade {
             return;
         }
     }
+
+    public void leaveGame(Menu postlogin) {
+        try {
+            webSocketRouter.close();
+            postlogin.interactWithMenu();
+        } catch (Exception e) {
+            System.out.println("Could not leave game. " + e.getMessage());
+            return;
+        }
+    }
 }

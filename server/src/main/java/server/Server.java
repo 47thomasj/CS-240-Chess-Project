@@ -30,7 +30,7 @@ public class Server {
         LoginHandler loginHandler = new LoginHandler(gson, userService);
         LogoutHandler logoutHandler = new LogoutHandler(gson, userService);
         RegisterHandler registerHandler = new RegisterHandler(gson, userService);
-        WebSocketHandler webSocketHandler = new WebSocketHandler();
+        WebSocketHandler webSocketHandler = new WebSocketHandler(gson);
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 

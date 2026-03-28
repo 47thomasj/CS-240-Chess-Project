@@ -41,32 +41,6 @@ public class UserGameCommand {
         return gameID;
     }
 
-    public boolean execute() {
-        return switch (this.commandType) {
-            case CONNECT -> executeConnect();
-            case MAKE_MOVE -> executeMakeMove();
-            case LEAVE -> executeLeave();
-            case RESIGN -> executeResign();
-            default -> false;
-        };
-    }
-
-    private boolean executeConnect() {
-        return true;
-    }
-
-    private boolean executeMakeMove() {
-        return true;
-    }
-
-    private boolean executeLeave() {
-        return true;
-    }
-
-    private boolean executeResign() {
-        return true;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {

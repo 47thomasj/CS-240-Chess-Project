@@ -68,4 +68,13 @@ public class GameService {
 
         return new JoinGameResult(true);
     }
+
+    public void leaveGame(LeaveGameRequest request) throws DataAccessException {
+        AuthData authData = authDAO.readAuth(request.authToken());
+
+        boolean isBadGameID = request.gameID() == null || request.gameID() <= 0;
+        if (isBadGameID) {
+            throw new DataAccessException("Error: bad request");
+        }
+    }
 }

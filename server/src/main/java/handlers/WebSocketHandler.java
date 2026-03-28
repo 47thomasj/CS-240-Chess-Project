@@ -1,9 +1,17 @@
 package handlers;
 
 import io.javalin.websocket.*;
+import websocket.commands.UserGameCommand;
+import com.google.gson.Gson;
 
 
 public class WebSocketHandler {
+
+    private final Gson gson;
+
+    public WebSocketHandler(Gson gson) {
+        this.gson = gson;
+    }
 
     public void configure(WsConfig wsConfig) {
         wsConfig.onConnect(this::onConnect);
@@ -17,7 +25,21 @@ public class WebSocketHandler {
     }
 
     private void onMessage(WsMessageContext ctx) {
-        ctx.message();
+        String message = ctx.message();
+        System.out.println("WebSocket message: " + message);
+        UserGameCommand command = gson.fromJson(message, UserGameCommand.class);
+        switch (command.getCommandType()) {
+            case CONNECT -> {
+                ctx.enableAutomaticPings();
+            }
+            case MAKE_MOVE -> onMakeMove(command);
+            case LEAVE -> onLeave(ctx);
+            case RESIGN -> onResign(ctx);
+        }
+    }
+
+    private void onMakeMove(UserGameCommand command) {
+        
     }
 
     private void onError(WsErrorContext ctx) {
