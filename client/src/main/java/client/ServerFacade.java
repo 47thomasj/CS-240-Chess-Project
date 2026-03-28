@@ -25,7 +25,13 @@ import routers.JoinGameRouter;
 import routers.WebSocketRouter;
 
 import chess.ChessGame.TeamColor;
+import chess.ChessPosition;
+import java.util.Scanner;
+import board.ChessPrinter;
+import java.util.HashMap;
 import websocket.commands.UserGameCommand;
+import chess.ChessPiece;
+import chess.ChessMove;
 import jakarta.websocket.ContainerProvider;
 import jakarta.websocket.WebSocketContainer;
 
@@ -161,19 +167,59 @@ public class ServerFacade {
             postlogin.interactWithMenu();
         } catch (Exception e) {
             System.out.println("Could not leave game. " + e.getMessage());
-            return;
         }
     }
 
-    public void resignGame(String authToken, int gameID, Menu postlogin) {
+    public void resignGame(String authToken, int gameID) {
         try {
             UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, gameID);
             webSocketRouter.send(command);
             webSocketRouter.close();
-            postlogin.interactWithMenu();
         } catch (Exception e) {
             System.out.println("Could not resign game. " + e.getMessage());
-            return;
+        }
+    }
+
+    public void makeMove(String authToken, int gameID) {
+        try {
+            @SuppressWarnings("resource")
+            Scanner scanner = new Scanner(System.in);
+
+            System.out.println("Enter the position of the piece to move: ");
+            ChessPosition startPosition = ChessPrinter.getPositionFromUser();
+            System.out.println("Enter the position to move the piece to: ");
+            ChessPosition endPosition = ChessPrinter.getPositionFromUser();
+
+            HashMap<String, ChessPiece.PieceType> promotionTypes = new HashMap<>();
+            promotionTypes.put("Q", ChessPiece.PieceType.QUEEN);
+            promotionTypes.put("R", ChessPiece.PieceType.ROOK);
+            promotionTypes.put("B", ChessPiece.PieceType.BISHOP);
+            promotionTypes.put("N", ChessPiece.PieceType.KNIGHT);
+
+            ChessPiece.PieceType promotionPiece = null;
+            while (promotionPiece == null) {
+                System.out.println("Enter the piece type to promote to (Q, R, B, N)");
+                System.out.print("(Enter nothing for no promotion): ");
+                String promotionType = scanner.nextLine();
+
+                if (promotionType.isEmpty()) {
+                    break;
+                }
+
+                if (!promotionTypes.containsKey(promotionType)) {
+                    System.out.println("Invalid promotion type. Please enter a valid promotion type (Q, R, B, N).");
+                    continue;
+                }
+
+                promotionPiece = promotionTypes.get(promotionType);
+            }
+
+            ChessMove move = new ChessMove(startPosition, endPosition, promotionPiece);
+            UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE, authToken, gameID, move);
+            webSocketRouter.send(command);
+            webSocketRouter.close();
+        } catch (Exception e) {
+            System.out.println("Could not make move. " + e.getMessage());
         }
     }
 }

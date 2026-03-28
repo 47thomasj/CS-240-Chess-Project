@@ -15,12 +15,8 @@ import java.util.HashMap;
 
 
 public class ChessPrinter {
-    
-    public static void printBoard(ChessBoard board, TeamColor teamColor) {
-        printBoardWithHighlights(board, teamColor, new ArrayList<>(), null);
-    }
 
-    public static void printLegalMoves(ChessBoard board, TeamColor teamColor) {
+    public static ChessPosition getPositionFromUser() {
         HashMap<String, Integer> letterToColNumber = new HashMap<>();
         letterToColNumber.put("a", 1);
         letterToColNumber.put("b", 2);
@@ -57,8 +53,15 @@ public class ChessPrinter {
             }
         }
 
-        ChessPosition position = new ChessPosition(row, col);
+        return new ChessPosition(row, col);
+    }
+    
+    public static void printBoard(ChessBoard board, TeamColor teamColor) {
+        printBoardWithHighlights(board, teamColor, new ArrayList<>(), null);
+    }
 
+    public static void printLegalMoves(ChessBoard board, TeamColor teamColor) {
+        ChessPosition position = getPositionFromUser();
         ChessPiece piece = board.getPiece(position);
         if (piece == null) {
             printBoard(board, teamColor);
