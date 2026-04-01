@@ -212,9 +212,9 @@ public class ServerFacade {
             @SuppressWarnings("resource")
             Scanner scanner = new Scanner(System.in);
 
-            System.out.println("Enter the position of the piece to move: ");
+            System.out.println("\nEnter the position of the piece to move: ");
             ChessPosition startPosition = ChessPrinter.getPositionFromUser();
-            System.out.println("Enter the position to move the piece to: ");
+            System.out.println("\nEnter the position to move the piece to: ");
             ChessPosition endPosition = ChessPrinter.getPositionFromUser();
 
             HashMap<String, ChessPiece.PieceType> promotionTypes = new HashMap<>();
@@ -225,7 +225,7 @@ public class ServerFacade {
 
             ChessPiece.PieceType promotionPiece = null;
             while (promotionPiece == null) {
-                System.out.println("Enter the piece type to promote to (Q, R, B, N)");
+                System.out.println("\nEnter the piece type to promote to (Q, R, B, N)");
                 System.out.print("(Enter nothing for no promotion): ");
                 String promotionType = scanner.nextLine();
 
@@ -234,7 +234,7 @@ public class ServerFacade {
                 }
 
                 if (!promotionTypes.containsKey(promotionType)) {
-                    System.out.println("Invalid promotion type. Please enter a valid promotion type (Q, R, B, N).");
+                    System.out.println("\nInvalid promotion type. Please enter a valid promotion type (Q, R, B, N).");
                     continue;
                 }
 
