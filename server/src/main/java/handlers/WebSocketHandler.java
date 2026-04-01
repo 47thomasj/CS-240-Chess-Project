@@ -9,6 +9,7 @@ import models.requests.LeaveGameRequest;
 import models.requests.MakeMoveRequest;
 import models.results.LeaveGameResult;
 import dataaccess.DataAccessException;
+import models.results.MakeMoveResult;
 
 public class WebSocketHandler {
 

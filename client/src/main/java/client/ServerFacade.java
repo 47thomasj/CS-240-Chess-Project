@@ -107,7 +107,6 @@ public class ServerFacade {
         ListGamesOutcome outcome = this.listGamesRouter.doListGames(authToken);
         if (outcome instanceof ListGamesOutcome.Success) {
             gamesManager.setGames(((ListGamesOutcome.Success) outcome).games());
-            System.out.println("\nsGames available:");
             gamesManager.printGames();
         } else {
             System.out.println("No games available");

@@ -9,12 +9,15 @@ import models.GameData;
 import models.requests.CreateGameRequest;
 import models.requests.JoinGameRequest;
 import models.requests.ListGamesRequest;
+import models.requests.MakeMoveRequest;
 import models.results.CreateGameResult;
 import models.results.JoinGameResult;
 import models.results.ListGamesResult;
 import models.requests.LeaveGameRequest;
 import models.results.LeaveGameResult;
+import models.results.MakeMoveResult;
 import chess.ChessGame.TeamColor;
+import chess.InvalidMoveException;
 
 import java.util.Objects;
 
@@ -70,6 +73,18 @@ public class GameService {
         gameDAO.updateGame(updatedGame);
 
         return new JoinGameResult(true);
+    }
+
+    public MakeMoveResult makeMove(MakeMoveRequest request) throws DataAccessException {
+        authDAO.readAuth(request.authToken());
+        GameData game = gameDAO.readGame(request.gameID());
+        try {
+            game.game().makeMove(request.move());
+        } catch (InvalidMoveException e) {
+            return new MakeMoveResult(false, e.getMessage());
+        }
+        gameDAO.updateGame(game);
+        return new MakeMoveResult(true, null);
     }
 
     public LeaveGameResult leaveGame(LeaveGameRequest request) throws DataAccessException {
