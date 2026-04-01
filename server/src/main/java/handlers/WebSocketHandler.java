@@ -10,6 +10,7 @@ import models.requests.MakeMoveRequest;
 import models.results.LeaveGameResult;
 import dataaccess.DataAccessException;
 import models.results.MakeMoveResult;
+import websocket.messages.LoadGameMessage;
 
 public class WebSocketHandler {
 
@@ -40,18 +41,19 @@ public class WebSocketHandler {
             case CONNECT -> {
                 ctx.enableAutomaticPings();
             }
-            case MAKE_MOVE -> onMakeMove(command);
+            case MAKE_MOVE -> onMakeMove(command, ctx);
             case LEAVE -> onLeave(command);
             case RESIGN -> onResign(command);
         }
     }
 
-    private void onMakeMove(UserGameCommand command) {
+    private void onMakeMove(UserGameCommand command, WsMessageContext ctx) {
         try {
             MakeMoveRequest request = new MakeMoveRequest(command.getAuthToken(), command.getGameID(), command.getMove());
             MakeMoveResult result = gameService.makeMove(request);
             if (result.success()) {
-                System.out.println("Successfully made move: " + command.getGameID());
+                LoadGameMessage message = new LoadGameMessage(result.game().game());
+                ctx.send(gson.toJson(message));
             } else {
                 System.out.println("Failed to make move: " + command.getGameID());
             }

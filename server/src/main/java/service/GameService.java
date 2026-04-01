@@ -81,10 +81,10 @@ public class GameService {
         try {
             game.game().makeMove(request.move());
         } catch (InvalidMoveException e) {
-            return new MakeMoveResult(false, e.getMessage());
+            return new MakeMoveResult(false, e.getMessage(), game);
         }
         gameDAO.updateGame(game);
-        return new MakeMoveResult(true, null);
+        return new MakeMoveResult(true, null, game);
     }
 
     public LeaveGameResult leaveGame(LeaveGameRequest request) throws DataAccessException {

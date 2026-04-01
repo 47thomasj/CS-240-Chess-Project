@@ -24,6 +24,8 @@ import routers.JoinGameRouter;
 
 import routers.WebSocketRouter;
 
+import websocket.messages.ServerMessage;
+import websocket.messages.LoadGameMessage;
 import chess.ChessGame.TeamColor;
 import chess.ChessPosition;
 import java.util.Scanner;
@@ -68,6 +70,7 @@ public class ServerFacade {
         this.observeGameRouter = new ObserveGameRouter(gamesManager);
         this.joinGameRouter = new JoinGameRouter(gamesManager, serverUrl, gson, client);
         this.webSocketRouter = new WebSocketRouter(gson, webSocketContainer);
+        this.webSocketRouter.setMessageHandler(this::onMessage);
     }
 
     public String register(Menu prelogin, Menu postlogin) {
@@ -218,6 +221,19 @@ public class ServerFacade {
             webSocketRouter.send(command);
         } catch (Exception e) {
             System.out.println("Could not make move. " + e.getMessage());
+        }
+    }
+
+    private void onMessage(String message) {
+        try {
+            ServerMessage serverMessage = gson.fromJson(message, ServerMessage.class);
+            if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
+                LoadGameMessage loadGameMessage = gson.fromJson(message, LoadGameMessage.class);
+                gamesManager.setCurrentGame(loadGameMessage.getGame());
+                ChessPrinter.printBoard(gamesManager.getCurrentGame().getBoard(), gamesManager.getCurrentTeamColor());
+            }
+        } catch (Exception e) {
+            System.out.println("Could not parse message. " + e.getMessage());
         }
     }
 }

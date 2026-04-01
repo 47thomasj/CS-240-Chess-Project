@@ -1,3 +1,5 @@
 package models.results;
 
-public record MakeMoveResult(boolean success, String message) {}    
+import models.GameData;
+
+public record MakeMoveResult(boolean success, String message, GameData game) {}    
