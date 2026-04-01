@@ -12,25 +12,24 @@ import dataaccess.DataAccessException;
 import models.results.MakeMoveResult;
 import websocket.messages.LoadGameMessage;
 
+import java.util.HashMap;
+
 public class WebSocketHandler {
 
     private final Gson gson;
     private final GameService gameService;
+    private final HashMap<Integer, WsContext[]> gameIdToContext;
 
-    public WebSocketHandler(Gson gson, GameService gameService) {
+    public WebSocketHandler(Gson gson, GameService gameService, HashMap<Integer, WsContext[]> gameIdToContext) {
         this.gson = gson;
         this.gameService = gameService;
+        this.gameIdToContext = gameIdToContext;
     }
 
     public void configure(WsConfig wsConfig) {
-        wsConfig.onConnect(this::onConnect);
         wsConfig.onMessage(this::onMessage);
         wsConfig.onError(this::onError);
         wsConfig.onClose(this::onClose);
-    }
-
-    private void onConnect(WsConnectContext ctx) {
-        ctx.enableAutomaticPings();
     }
 
     private void onMessage(WsMessageContext ctx) {
@@ -40,20 +39,28 @@ public class WebSocketHandler {
         switch (command.getCommandType()) {
             case CONNECT -> {
                 ctx.enableAutomaticPings();
+                if (!gameIdToContext.containsKey(command.getGameID())) {
+                    gameIdToContext.put(command.getGameID(), new WsContext[] { ctx });
+                } else {
+                    gameIdToContext.get(command.getGameID()).add(ctx);
+                }
             }
-            case MAKE_MOVE -> onMakeMove(command, ctx);
+            case MAKE_MOVE -> onMakeMove(command, ctx, gameIdToContext);
             case LEAVE -> onLeave(command);
             case RESIGN -> onResign(command);
         }
     }
 
-    private void onMakeMove(UserGameCommand command, WsMessageContext ctx) {
+    private void onMakeMove(UserGameCommand command, WsMessageContext ctx, HashMap<Integer, WsContext[]> gameIdToContext) {
         try {
             MakeMoveRequest request = new MakeMoveRequest(command.getAuthToken(), command.getGameID(), command.getMove());
             MakeMoveResult result = gameService.makeMove(request);
             if (result.success()) {
                 LoadGameMessage message = new LoadGameMessage(result.game().game());
-                ctx.send(gson.toJson(message));
+                WsContext[] contexts = gameIdToContext.get(command.getGameID());
+                for (WsContext context : contexts) {
+                    context.send(gson.toJson(message));
+                }
             } else {
                 System.out.println("Failed to make move: " + command.getGameID());
             }

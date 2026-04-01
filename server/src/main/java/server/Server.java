@@ -7,11 +7,18 @@ import io.javalin.*;
 
 import com.google.gson.Gson;
 
+import java.util.HashMap;
+
+import io.javalin.websocket.WsContext;
+
 public class Server {
 
     private final Javalin javalin;
+    private final HashMap<Integer, WsContext[]> gameIdToContext;
 
     public Server() {
+
+        this.gameIdToContext = new HashMap<>();
 
         Gson gson = new Gson();
 
@@ -30,7 +37,7 @@ public class Server {
         LoginHandler loginHandler = new LoginHandler(gson, userService);
         LogoutHandler logoutHandler = new LogoutHandler(gson, userService);
         RegisterHandler registerHandler = new RegisterHandler(gson, userService);
-        WebSocketHandler webSocketHandler = new WebSocketHandler(gson, gameService);
+        WebSocketHandler webSocketHandler = new WebSocketHandler(gson, gameService, gameIdToContext);
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
