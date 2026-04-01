@@ -11,6 +11,7 @@ public class Client {
     private Menu prelogin;
     private Menu postlogin;
     private Menu gameplay;
+    private Menu observe;
 
     private ServerFacade serverFacade;
 
@@ -60,9 +61,13 @@ public class Client {
                 this.postlogin.interactWithMenu();
             }
         }, postLoginHelpString, "You are now logged in. Welcome!");
+
         this.gameplay = new Menu("Leave", () -> {
             serverFacade.leaveGame(this.authToken, this.gamesManager.getCurrentGameID(), this.postlogin);
         }, gameplayHelpString, "Enjoy the match!");
+        this.observe = new Menu("Leave", () -> {
+            serverFacade.leaveObserveGame(this.authToken, this.gamesManager.getCurrentGameID(), this.postlogin);
+        }, "Leave the game", "Enjoy the match (observing)!");
 
         this.prelogin.addOption(new MenuOption("Login", () -> {
             String outcome = serverFacade.login(this.postlogin);
@@ -85,7 +90,7 @@ public class Client {
         this.postlogin.addOption(new MenuOption("Join and begin playing a pre-existing Chess Game", () -> serverFacade.joinGame(this.authToken, this.gameplay)));
         this.postlogin.addOption(new MenuOption(
             "Observe a pre-existing Chess Game, but not participate in it", 
-            () -> serverFacade.observeGame(this.authToken))
+            () -> serverFacade.observeGame(this.authToken, this.observe))
         );
         
         this.gameplay.addOption(new MenuOption("Redraw the chess board", () -> ChessPrinter.printBoard(this.gamesManager.getCurrentGame().getBoard(), this.gamesManager.getCurrentTeamColor())));

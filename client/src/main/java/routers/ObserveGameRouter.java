@@ -16,7 +16,7 @@ public class ObserveGameRouter {
         this.gamesManager = gamesManager;
     }
 
-    public void doObserveGame(TeamColor teamColor) {
+    public int doObserveGame(TeamColor teamColor) {
         gamesManager.printGames();
 
         @SuppressWarnings("resource")
@@ -26,9 +26,10 @@ public class ObserveGameRouter {
         GameData game = gamesManager.getGameByNumber(gameID);
         if (game == null) {
             System.out.println("Game not found");
-            return;
+            return -1;
         }
 
         ChessPrinter.printBoard(game.game().getBoard(), teamColor);
+        return game.gameID();
     }
 }

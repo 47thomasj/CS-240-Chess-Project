@@ -116,7 +116,7 @@ public class ServerFacade {
         }
     }
 
-    public void observeGame(String authToken) {
+    public void observeGame(String authToken, Menu observe) {
         ListGamesOutcome outcome = this.listGamesRouter.doListGames(authToken);
         if (outcome instanceof ListGamesOutcome.Success) {
             gamesManager.setGames(((ListGamesOutcome.Success) outcome).games());
@@ -124,7 +124,31 @@ public class ServerFacade {
             System.out.println("No games available");
             return;
         }
-        observeGameRouter.doObserveGame(TeamColor.WHITE);
+        int gameId = observeGameRouter.doObserveGame(TeamColor.WHITE);
+        if (gameId != -1) {
+            try {
+                webSocketRouter.connect(authToken, gameId);
+                gamesManager.setCurrentGameID(gameId);
+            } catch (Exception e) {
+                System.out.println("Could not connect to game. " + e.getMessage());
+                return;
+            }
+            observe.interactWithMenu();
+        } else {
+            System.out.println("Could not observe game. Did you enter a valid game ID?");
+            return;
+        }
+    }
+
+    public void leaveObserveGame(String authToken, int gameID, Menu postlogin) {
+        try {
+            UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID);
+            webSocketRouter.send(command);
+            webSocketRouter.close();
+            postlogin.interactWithMenu();
+        } catch (Exception e) {
+            System.out.println("Could not leave observe game. " + e.getMessage());
+        }
     }
 
     public void createGame(String authToken) {
