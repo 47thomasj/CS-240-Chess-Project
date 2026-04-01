@@ -216,7 +216,6 @@ public class ServerFacade {
             ChessMove move = new ChessMove(startPosition, endPosition, promotionPiece);
             UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE, authToken, gameID, move);
             webSocketRouter.send(command);
-            webSocketRouter.close();
         } catch (Exception e) {
             System.out.println("Could not make move. " + e.getMessage());
         }
