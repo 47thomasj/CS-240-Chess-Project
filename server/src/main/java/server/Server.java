@@ -16,11 +16,13 @@ public class Server {
 
     private final Javalin javalin;
     private final HashMap<Integer, List<WsContext>> gameIdToContext;
+    private final HashMap<String, WsContext> authTokenToContext;
 
     public Server() {
 
         this.gameIdToContext = new HashMap<>();
-
+        this.authTokenToContext = new HashMap<>();
+        
         Gson gson = new Gson();
 
         AuthDAO authDAO = new AuthDAO();
@@ -38,7 +40,7 @@ public class Server {
         LoginHandler loginHandler = new LoginHandler(gson, userService);
         LogoutHandler logoutHandler = new LogoutHandler(gson, userService);
         RegisterHandler registerHandler = new RegisterHandler(gson, userService);
-        WebSocketHandler webSocketHandler = new WebSocketHandler(gson, gameService, gameIdToContext);
+        WebSocketHandler webSocketHandler = new WebSocketHandler(gson, gameService, gameIdToContext, authTokenToContext);
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 

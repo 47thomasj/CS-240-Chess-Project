@@ -21,11 +21,13 @@ public class WebSocketHandler {
     private final Gson gson;
     private final GameService gameService;
     private final HashMap<Integer, List<WsContext>> gameIdToContext;
+    private final HashMap<String, WsContext> authTokenToContext;
 
-    public WebSocketHandler(Gson gson, GameService gameService, HashMap<Integer, List<WsContext>> gameIdToContext) {
+    public WebSocketHandler(Gson gson, GameService gameService, HashMap<Integer, List<WsContext>> gameIdToContext, HashMap<String, WsContext> authTokenToContext) {
         this.gson = gson;
         this.gameService = gameService;
         this.gameIdToContext = gameIdToContext;
+        this.authTokenToContext = authTokenToContext;
     }
 
     public void configure(WsConfig wsConfig) {
@@ -40,8 +42,8 @@ public class WebSocketHandler {
         UserGameCommand command = gson.fromJson(message, UserGameCommand.class);
         switch (command.getCommandType()) {
             case CONNECT -> onConnect(command, ctx, gameIdToContext);
-            case MAKE_MOVE -> onMakeMove(command, ctx, gameIdToContext);
-            case LEAVE -> onLeave(command);
+            case MAKE_MOVE -> onMakeMove(command, gameIdToContext);
+            case LEAVE -> onLeave(command, gameIdToContext);
             case RESIGN -> onResign(command);
         }
     }
@@ -51,9 +53,10 @@ public class WebSocketHandler {
         gameIdToContext
             .computeIfAbsent(command.getGameID(), k -> new ArrayList<>())
             .add(ctx);
+        authTokenToContext.put(command.getAuthToken(), ctx);
     }
 
-    private void onMakeMove(UserGameCommand command, WsMessageContext ctx, HashMap<Integer, List<WsContext>> gameIdToContext) {
+    private void onMakeMove(UserGameCommand command, HashMap<Integer, List<WsContext>> gameIdToContext) {
         try {
             MakeMoveRequest request = new MakeMoveRequest(command.getAuthToken(), command.getGameID(), command.getMove());
             MakeMoveResult result = gameService.makeMove(request);
@@ -71,11 +74,14 @@ public class WebSocketHandler {
         }
     }
 
-    private void onLeave(UserGameCommand command) {
+    private void onLeave(UserGameCommand command, HashMap<Integer, List<WsContext>> gameIdToContext) {
         try {
             LeaveGameRequest request = new LeaveGameRequest(command.getAuthToken(), command.getGameID());
             LeaveGameResult result = gameService.leaveGame(request);
             if (result.success()) {
+                WsContext ctx = authTokenToContext.remove(command.getAuthToken());
+                gameIdToContext.get(command.getGameID()).remove(ctx);
+                ctx.session.close();
                 System.out.println("Successfully left game: " + command.getGameID());
             } else {
                 System.out.println("Failed to leave game: " + command.getGameID());
