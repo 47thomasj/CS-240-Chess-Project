@@ -12,15 +12,17 @@ import dataaccess.DataAccessException;
 import models.results.MakeMoveResult;
 import websocket.messages.LoadGameMessage;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class WebSocketHandler {
 
     private final Gson gson;
     private final GameService gameService;
-    private final HashMap<Integer, WsContext[]> gameIdToContext;
+    private final HashMap<Integer, List<WsContext>> gameIdToContext;
 
-    public WebSocketHandler(Gson gson, GameService gameService, HashMap<Integer, WsContext[]> gameIdToContext) {
+    public WebSocketHandler(Gson gson, GameService gameService, HashMap<Integer, List<WsContext>> gameIdToContext) {
         this.gson = gson;
         this.gameService = gameService;
         this.gameIdToContext = gameIdToContext;
@@ -37,27 +39,27 @@ public class WebSocketHandler {
         System.out.println("WebSocket message: " + message);
         UserGameCommand command = gson.fromJson(message, UserGameCommand.class);
         switch (command.getCommandType()) {
-            case CONNECT -> {
-                ctx.enableAutomaticPings();
-                if (!gameIdToContext.containsKey(command.getGameID())) {
-                    gameIdToContext.put(command.getGameID(), new WsContext[] { ctx });
-                } else {
-                    gameIdToContext.get(command.getGameID()).add(ctx);
-                }
-            }
+            case CONNECT -> onConnect(command, ctx, gameIdToContext);
             case MAKE_MOVE -> onMakeMove(command, ctx, gameIdToContext);
             case LEAVE -> onLeave(command);
             case RESIGN -> onResign(command);
         }
     }
 
-    private void onMakeMove(UserGameCommand command, WsMessageContext ctx, HashMap<Integer, WsContext[]> gameIdToContext) {
+    private void onConnect(UserGameCommand command, WsMessageContext ctx, HashMap<Integer, List<WsContext>> gameIdToContext) {
+        ctx.enableAutomaticPings();
+        gameIdToContext
+            .computeIfAbsent(command.getGameID(), k -> new ArrayList<>())
+            .add(ctx);
+    }
+
+    private void onMakeMove(UserGameCommand command, WsMessageContext ctx, HashMap<Integer, List<WsContext>> gameIdToContext) {
         try {
             MakeMoveRequest request = new MakeMoveRequest(command.getAuthToken(), command.getGameID(), command.getMove());
             MakeMoveResult result = gameService.makeMove(request);
             if (result.success()) {
                 LoadGameMessage message = new LoadGameMessage(result.game().game());
-                WsContext[] contexts = gameIdToContext.get(command.getGameID());
+                List<WsContext> contexts = gameIdToContext.get(command.getGameID());
                 for (WsContext context : contexts) {
                     context.send(gson.toJson(message));
                 }

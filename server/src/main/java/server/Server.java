@@ -8,13 +8,14 @@ import io.javalin.*;
 import com.google.gson.Gson;
 
 import java.util.HashMap;
+import java.util.List;
 
 import io.javalin.websocket.WsContext;
 
 public class Server {
 
     private final Javalin javalin;
-    private final HashMap<Integer, WsContext[]> gameIdToContext;
+    private final HashMap<Integer, List<WsContext>> gameIdToContext;
 
     public Server() {
 

@@ -47,6 +47,8 @@ public class WebSocketRouter {
 
         URI uri = URI.create(wsUrl);
         this.session = webSocketContainer.connectToServer(this, uri);
+        UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
+        send(command);
         return true;
     }
 
