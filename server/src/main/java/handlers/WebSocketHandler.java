@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 
 import service.GameService;
 import models.requests.LeaveGameRequest;
+import models.requests.MakeMoveRequest;
 import models.results.LeaveGameResult;
 import dataaccess.DataAccessException;
 
@@ -45,7 +46,17 @@ public class WebSocketHandler {
     }
 
     private void onMakeMove(UserGameCommand command) {
-        System.out.println("Making move: " + command.getGameID());
+        try {
+            MakeMoveRequest request = new MakeMoveRequest(command.getAuthToken(), command.getGameID(), command.getMove());
+            MakeMoveResult result = gameService.makeMove(request);
+            if (result.success()) {
+                System.out.println("Successfully made move: " + command.getGameID());
+            } else {
+                System.out.println("Failed to make move: " + command.getGameID());
+            }
+        } catch (DataAccessException e) {
+            System.out.println("Error making move: " + e.getMessage());
+        }
     }
 
     private void onLeave(UserGameCommand command) {
