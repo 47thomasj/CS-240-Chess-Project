@@ -9,12 +9,14 @@ public class GamesManager {
     private int currentGameID;
     private ChessGame currentGame;
     private TeamColor currentTeamColor;
+    private TeamColor perspective;
 
     public GamesManager(GameData[] games) {
         this.games = games;
         this.currentGameID = -1;
         this.currentGame = null;
         this.currentTeamColor = null;
+        this.perspective = null;
     }
 
     public void setGames(GameData[] games) {
@@ -47,6 +49,14 @@ public class GamesManager {
 
     public TeamColor getCurrentTeamColor() {
         return currentTeamColor;
+    }
+
+    public void setPerspective(TeamColor perspective) {
+        this.perspective = perspective;
+    }
+
+    public TeamColor getPerspective() {
+        return perspective;
     }
 
     public void printGames() {

@@ -65,6 +65,7 @@ public class JoinGameRouter {
         }
         
         JoinOutcome outcome = joinGame(game.gameID(), teamColor, authToken);
+        gamesManager.setPerspective(teamColor);
         if (outcome instanceof JoinOutcome.Success) {
             System.out.println("Joined game successfully");
             gamesManager.setCurrentGame(game.game());

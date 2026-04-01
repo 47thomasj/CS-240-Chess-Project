@@ -120,6 +120,7 @@ public class ServerFacade {
         ListGamesOutcome outcome = this.listGamesRouter.doListGames(authToken);
         if (outcome instanceof ListGamesOutcome.Success) {
             gamesManager.setGames(((ListGamesOutcome.Success) outcome).games());
+            gamesManager.setPerspective(TeamColor.WHITE);
         } else {
             System.out.println("No games available");
             return;
@@ -254,7 +255,7 @@ public class ServerFacade {
             if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
                 LoadGameMessage loadGameMessage = gson.fromJson(message, LoadGameMessage.class);
                 gamesManager.setCurrentGame(loadGameMessage.getGame());
-                ChessPrinter.printBoard(gamesManager.getCurrentGame().getBoard(), gamesManager.getCurrentTeamColor());
+                ChessPrinter.printBoard(gamesManager.getCurrentGame().getBoard(), gamesManager.getPerspective());
             }
         } catch (Exception e) {
             System.out.println("Could not parse message. " + e.getMessage());
