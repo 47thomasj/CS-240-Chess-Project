@@ -60,7 +60,16 @@ public class WebSocketHandler {
         try {
             String username = wsService.getUsername(command.getAuthToken());
             GameData game = wsService.getGame(command.getGameID());
-            String notification = "\n" + username + " joined the game " + (game.gameName()) + " as " + (game.whiteUsername() != null ? "white" : "black");
+
+
+            String teamColor = "an observer";
+            if (game.whiteUsername() != null && game.whiteUsername().equals(username)) {
+                teamColor = "white";
+            } else if (game.blackUsername() != null && game.blackUsername().equals(username)) {
+                teamColor = "black";
+            }
+
+            String notification = "\n" + username + " joined the game " + (game.gameName()) + " as " + teamColor;
             NotificationMessage notificationMessage = new NotificationMessage(notification);
 
             LoadGameMessage message = new LoadGameMessage(game.game());
