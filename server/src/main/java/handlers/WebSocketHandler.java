@@ -108,6 +108,8 @@ public class WebSocketHandler {
                     notificationMessage = new NotificationMessage(notification + "\n" + username + " is in check.");
                 } else if (wsService.isPlayerInCheckmate(command.getAuthToken(), command.getGameID())) {
                     notificationMessage = new NotificationMessage(notification + "\n" + username + " is in checkmate.");
+                } else if (wsService.isPlayerInStalemate(command.getAuthToken(), command.getGameID())) {
+                    notificationMessage = new NotificationMessage(notification + "\n" + username + " is in stalemate.");
                 } else {
                     notificationMessage = new NotificationMessage(notification);
                 }

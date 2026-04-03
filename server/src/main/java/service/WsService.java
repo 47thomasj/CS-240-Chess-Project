@@ -47,4 +47,15 @@ public class WsService {
         }
         return false;
     }
+
+    public boolean isPlayerInStalemate(String authToken, int gameID) throws DataAccessException {
+        AuthData authData = authDAO.readAuth(authToken);
+        GameData game = gameDAO.readGame(gameID);
+        if (Objects.equals(game.whiteUsername(), authData.username())) {
+            return game.game().isInStalemate(ChessGame.TeamColor.WHITE);
+        } else if (Objects.equals(game.blackUsername(), authData.username())) {
+            return game.game().isInStalemate(ChessGame.TeamColor.BLACK);
+        }
+        return false;
+    }
 }
