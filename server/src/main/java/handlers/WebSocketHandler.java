@@ -151,7 +151,14 @@ public class WebSocketHandler {
             LeaveGameRequest request = new LeaveGameRequest(command.getAuthToken(), command.getGameID());
             LeaveGameResult result = gameService.resignGame(request);
             if (result.success()) {
-                System.out.println("Successfully resigned game: " + command.getGameID());
+                String username = wsService.getUsername(command.getAuthToken());
+                GameData game = wsService.getGame(command.getGameID());
+                String notification = "\n" + username + " resigned the game: " + (game.gameName());
+                NotificationMessage notificationMessage = new NotificationMessage(notification);
+                List<WsContext> contexts = gameIdToContext.get(command.getGameID());
+                for (WsContext context : contexts) {
+                    context.send(gson.toJson(notificationMessage));
+                }
             } else {
                 System.out.println("Failed to resign game: " + command.getGameID());
             }
