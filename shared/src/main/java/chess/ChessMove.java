@@ -62,6 +62,10 @@ public class ChessMove {
 
     @Override
     public String toString() {
-        return String.format("(%d,%d) -> (%d,%d)", start.getRow(), start.getColumn(), end.getRow(), end.getColumn());
+        return String.format("(%c,%d) -> (%c,%d)", getColAsChar(start.getColumn()), start.getRow(), getColAsChar(end.getColumn()), end.getRow());
+    }
+
+    private char getColAsChar(int col) {
+        return (char) ('a' + col - 1);
     }
 }

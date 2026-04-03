@@ -48,7 +48,7 @@ public class WebSocketHandler {
         UserGameCommand command = gson.fromJson(message, UserGameCommand.class);
         switch (command.getCommandType()) {
             case CONNECT -> onConnect(command, ctx, gameIdToContext);
-            case MAKE_MOVE -> onMakeMove(command, gameIdToContext);
+            case MAKE_MOVE -> onMakeMove(command, gameIdToContext, ctx);
             case LEAVE -> onLeave(command, gameIdToContext);
             case RESIGN -> onResign(command);
         }
@@ -94,15 +94,21 @@ public class WebSocketHandler {
         
     }
 
-    private void onMakeMove(UserGameCommand command, HashMap<Integer, List<WsContext>> gameIdToContext) {
+    private void onMakeMove(UserGameCommand command, HashMap<Integer, List<WsContext>> gameIdToContext, WsContext ctx) {
         try {
             MakeMoveRequest request = new MakeMoveRequest(command.getAuthToken(), command.getGameID(), command.getMove());
             MakeMoveResult result = gameService.makeMove(request);
             if (result.success()) {
                 LoadGameMessage message = new LoadGameMessage(result.game().game());
+                String username = wsService.getUsername(command.getAuthToken());
+                String notification = "\n" + username + " made a move: " + command.getMove().toString();
+                NotificationMessage notificationMessage = new NotificationMessage(notification);
                 List<WsContext> contexts = gameIdToContext.get(command.getGameID());
                 for (WsContext context : contexts) {
                     context.send(gson.toJson(message));
+                    if (context != ctx) {
+                        context.send(gson.toJson(notificationMessage));
+                    }
                 }
             } else {
                 System.out.println("Failed to make move: " + command.getGameID());
