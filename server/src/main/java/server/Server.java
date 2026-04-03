@@ -32,6 +32,7 @@ public class Server {
         ClearApplicationService clearApplicationService = new ClearApplicationService(authDAO, gameDAO, userDAO);
         GameService gameService = new GameService(authDAO, gameDAO);
         UserService userService = new UserService(userDAO, authDAO);
+        WsService wsService = new WsService(authDAO, gameDAO);
 
         ClearApplicationHandler clearApplicationHandler = new ClearApplicationHandler(gson, clearApplicationService);
         CreateGamesHandler createGamesHandler = new CreateGamesHandler(gson, gameService);
@@ -40,7 +41,7 @@ public class Server {
         LoginHandler loginHandler = new LoginHandler(gson, userService);
         LogoutHandler logoutHandler = new LogoutHandler(gson, userService);
         RegisterHandler registerHandler = new RegisterHandler(gson, userService);
-        WebSocketHandler webSocketHandler = new WebSocketHandler(gson, gameService, gameIdToContext, authTokenToContext);
+        WebSocketHandler webSocketHandler = new WebSocketHandler(gson, gameService, wsService, gameIdToContext, authTokenToContext);
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 

@@ -5,6 +5,7 @@ import websocket.commands.UserGameCommand;
 import com.google.gson.Gson;
 
 import service.GameService;
+import service.WsService;
 import models.requests.LeaveGameRequest;
 import models.requests.MakeMoveRequest;
 import models.results.LeaveGameResult;
@@ -16,16 +17,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import models.GameData;
+
 public class WebSocketHandler {
 
     private final Gson gson;
     private final GameService gameService;
+    private final WsService wsService;
     private final HashMap<Integer, List<WsContext>> gameIdToContext;
     private final HashMap<String, WsContext> authTokenToContext;
 
-    public WebSocketHandler(Gson gson, GameService gameService, HashMap<Integer, List<WsContext>> gameIdToContext, HashMap<String, WsContext> authTokenToContext) {
+    public WebSocketHandler(Gson gson, GameService gameService, WsService wsService, HashMap<Integer, List<WsContext>> gameIdToContext, HashMap<String, WsContext> authTokenToContext) {
         this.gson = gson;
         this.gameService = gameService;
+        this.wsService = wsService;
         this.gameIdToContext = gameIdToContext;
         this.authTokenToContext = authTokenToContext;
     }
@@ -54,6 +59,18 @@ public class WebSocketHandler {
             .computeIfAbsent(command.getGameID(), k -> new ArrayList<>())
             .add(ctx);
         authTokenToContext.put(command.getAuthToken(), ctx);
+        try {
+            String username = wsService.getUsername(command.getAuthToken());
+            GameData game = wsService.getGame(command.getGameID());
+            String notification = username + " joined the game" + (game.gameName()) + " as " + (game.whiteUsername().equals(username) ? "white" : "black");
+            List<WsContext> contexts = gameIdToContext.get(command.getGameID());
+            for (WsContext context : contexts) {
+                context.send(gson.toJson(notification));
+            }
+        } catch (DataAccessException e) {
+            System.out.println("Error sending notifications: " + e.getMessage());
+            return;
+        }
     }
 
     private void onMakeMove(UserGameCommand command, HashMap<Integer, List<WsContext>> gameIdToContext) {
