@@ -60,7 +60,7 @@ public class WebSocketHandler {
         try {
             String username = wsService.getUsername(command.getAuthToken());
             GameData game = wsService.getGame(command.getGameID());
-            String notification = "\n" + username + " joined the game" + (game.gameName()) + " as " + (game.whiteUsername() != null ? "white" : "black");
+            String notification = "\n" + username + " joined the game " + (game.gameName()) + " as " + (game.whiteUsername() != null ? "white" : "black");
             NotificationMessage notificationMessage = new NotificationMessage(notification);
 
             LoadGameMessage message = new LoadGameMessage(game.game());
@@ -108,8 +108,19 @@ public class WebSocketHandler {
             LeaveGameRequest request = new LeaveGameRequest(command.getAuthToken(), command.getGameID());
             LeaveGameResult result = gameService.leaveGame(request);
             if (result.success()) {
+                String username = wsService.getUsername(command.getAuthToken());
+                GameData game = wsService.getGame(command.getGameID());
+                String notification = "\n" + username + " left the game: " + (game.gameName());
+                NotificationMessage notificationMessage = new NotificationMessage(notification);
+
                 WsContext ctx = authTokenToContext.remove(command.getAuthToken());
                 gameIdToContext.get(command.getGameID()).remove(ctx);
+
+                List<WsContext> contexts = gameIdToContext.get(command.getGameID());
+                for (WsContext context : contexts) {
+                    context.send(gson.toJson(notificationMessage));
+                }
+
                 ctx.session.close();
                 System.out.println("Successfully left game: " + command.getGameID());
             } else {
