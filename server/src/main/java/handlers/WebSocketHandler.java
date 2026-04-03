@@ -102,7 +102,16 @@ public class WebSocketHandler {
                 LoadGameMessage message = new LoadGameMessage(result.game().game());
                 String username = wsService.getUsername(command.getAuthToken());
                 String notification = "\n" + username + " made a move: " + command.getMove().toString();
-                NotificationMessage notificationMessage = new NotificationMessage(notification);
+                
+                NotificationMessage notificationMessage = null;
+                if (wsService.isPlayerInCheck(command.getAuthToken(), command.getGameID())) {
+                    notificationMessage = new NotificationMessage(notification + "\n" + username + " is in check.");
+                } else if (wsService.isPlayerInCheckmate(command.getAuthToken(), command.getGameID())) {
+                    notificationMessage = new NotificationMessage(notification + "\n" + username + " is in checkmate.");
+                } else {
+                    notificationMessage = new NotificationMessage(notification);
+                }
+                
                 List<WsContext> contexts = gameIdToContext.get(command.getGameID());
                 for (WsContext context : contexts) {
                     context.send(gson.toJson(message));
