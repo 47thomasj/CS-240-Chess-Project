@@ -26,6 +26,7 @@ import routers.WebSocketRouter;
 
 import websocket.messages.ServerMessage;
 import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
 import chess.ChessGame.TeamColor;
 import chess.ChessPosition;
 import java.util.Scanner;
@@ -190,7 +191,6 @@ public class ServerFacade {
         try {
             UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID);
             webSocketRouter.send(command);
-            webSocketRouter.close();
             postlogin.interactWithMenu();
         } catch (Exception e) {
             System.out.println("Could not leave game. " + e.getMessage());
@@ -201,7 +201,6 @@ public class ServerFacade {
         try {
             UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, gameID);
             webSocketRouter.send(command);
-            webSocketRouter.close();
         } catch (Exception e) {
             System.out.println("Could not resign game. " + e.getMessage());
         }
@@ -256,6 +255,10 @@ public class ServerFacade {
                 LoadGameMessage loadGameMessage = gson.fromJson(message, LoadGameMessage.class);
                 gamesManager.setCurrentGame(loadGameMessage.getGame());
                 ChessPrinter.printBoard(gamesManager.getCurrentGame().getBoard(), gamesManager.getPerspective());
+            }
+            else if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {
+                NotificationMessage notificationMessage = gson.fromJson(message, NotificationMessage.class);
+                System.out.println(notificationMessage.getMessage());
             }
         } catch (Exception e) {
             System.out.println("Could not parse message. " + e.getMessage());

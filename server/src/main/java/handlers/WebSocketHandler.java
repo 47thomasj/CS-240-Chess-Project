@@ -12,6 +12,7 @@ import models.results.LeaveGameResult;
 import dataaccess.DataAccessException;
 import models.results.MakeMoveResult;
 import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,22 +56,33 @@ public class WebSocketHandler {
 
     private void onConnect(UserGameCommand command, WsMessageContext ctx, HashMap<Integer, List<WsContext>> gameIdToContext) {
         ctx.enableAutomaticPings();
-        gameIdToContext
-            .computeIfAbsent(command.getGameID(), k -> new ArrayList<>())
-            .add(ctx);
-        authTokenToContext.put(command.getAuthToken(), ctx);
+        
         try {
             String username = wsService.getUsername(command.getAuthToken());
             GameData game = wsService.getGame(command.getGameID());
-            String notification = username + " joined the game" + (game.gameName()) + " as " + (game.whiteUsername().equals(username) ? "white" : "black");
+            String notification = "\n" + username + " joined the game" + (game.gameName()) + " as " + (game.whiteUsername() != null ? "white" : "black");
+            NotificationMessage notificationMessage = new NotificationMessage(notification);
+
+            LoadGameMessage message = new LoadGameMessage(game.game());
+            ctx.send(gson.toJson(message));
+
             List<WsContext> contexts = gameIdToContext.get(command.getGameID());
-            for (WsContext context : contexts) {
-                context.send(gson.toJson(notification));
+            if (contexts != null) {
+                for (WsContext context : contexts) {
+                    context.send(gson.toJson(notificationMessage));
+                }
             }
         } catch (DataAccessException e) {
             System.out.println("Error sending notifications: " + e.getMessage());
             return;
         }
+
+        gameIdToContext
+            .computeIfAbsent(command.getGameID(), k -> new ArrayList<>())
+            .add(ctx);
+        authTokenToContext.put(command.getAuthToken(), ctx);
+
+        
     }
 
     private void onMakeMove(UserGameCommand command, HashMap<Integer, List<WsContext>> gameIdToContext) {
