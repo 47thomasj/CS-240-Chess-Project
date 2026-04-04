@@ -82,7 +82,8 @@ public class WebSocketHandler {
                 }
             }
         } catch (DataAccessException e) {
-            System.out.println("Error sending notifications: " + e.getMessage());
+            ErrorMessage errorMessage = new ErrorMessage("Error: " + e.getMessage());
+            ctx.send(gson.toJson(errorMessage));
             return;
         }
 
@@ -117,7 +118,7 @@ public class WebSocketHandler {
                 List<WsContext> contexts = gameIdToContext.get(command.getGameID());
                 for (WsContext context : contexts) {
                     context.send(gson.toJson(message));
-                    if (context != ctx) {
+                    if (!context.equals(ctx)) {
                         context.send(gson.toJson(notificationMessage));
                     }
                 }
