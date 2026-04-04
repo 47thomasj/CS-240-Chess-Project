@@ -13,7 +13,7 @@ import dataaccess.DataAccessException;
 import models.results.MakeMoveResult;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
-
+import websocket.messages.ErrorMessage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,8 +49,8 @@ public class WebSocketHandler {
         switch (command.getCommandType()) {
             case CONNECT -> onConnect(command, ctx, gameIdToContext);
             case MAKE_MOVE -> onMakeMove(command, gameIdToContext, ctx);
-            case LEAVE -> onLeave(command, gameIdToContext);
-            case RESIGN -> onResign(command);
+            case LEAVE -> onLeave(command, gameIdToContext, ctx);
+            case RESIGN -> onResign(command, ctx);
         }
     }
 
@@ -122,14 +122,16 @@ public class WebSocketHandler {
                     }
                 }
             } else {
-                System.out.println("Failed to make move: " + command.getGameID());
+                ErrorMessage errorMessage = new ErrorMessage("Error: Failed to make move: " + command.getGameID());
+                ctx.send(gson.toJson(errorMessage));
             }
         } catch (DataAccessException e) {
-            System.out.println("Error making move: " + e.getMessage());
+            ErrorMessage errorMessage = new ErrorMessage("Error: " + e.getMessage());
+            ctx.send(gson.toJson(errorMessage));
         }
     }
 
-    private void onLeave(UserGameCommand command, HashMap<Integer, List<WsContext>> gameIdToContext) {
+    private void onLeave(UserGameCommand command, HashMap<Integer, List<WsContext>> gameIdToContext, WsContext ctx) {
         try {
             LeaveGameRequest request = new LeaveGameRequest(command.getAuthToken(), command.getGameID());
             LeaveGameResult result = gameService.leaveGame(request);
@@ -139,7 +141,7 @@ public class WebSocketHandler {
                 String notification = "\n" + username + " left the game: " + (game.gameName());
                 NotificationMessage notificationMessage = new NotificationMessage(notification);
 
-                WsContext ctx = authTokenToContext.remove(command.getAuthToken());
+                ctx = authTokenToContext.remove(command.getAuthToken());
                 gameIdToContext.get(command.getGameID()).remove(ctx);
 
                 List<WsContext> contexts = gameIdToContext.get(command.getGameID());
@@ -150,14 +152,16 @@ public class WebSocketHandler {
                 ctx.session.close();
                 System.out.println("Successfully left game: " + command.getGameID());
             } else {
-                System.out.println("Failed to leave game: " + command.getGameID());
+                ErrorMessage errorMessage = new ErrorMessage("Error: Failed to leave game: " + command.getGameID());
+                ctx.send(gson.toJson(errorMessage));
             }
         } catch (DataAccessException e) {
-            System.out.println("Error leaving game: " + e.getMessage());
+            ErrorMessage errorMessage = new ErrorMessage("Error: " + e.getMessage());
+            ctx.send(gson.toJson(errorMessage));
         }
     }
 
-    private void onResign(UserGameCommand command) {
+    private void onResign(UserGameCommand command, WsContext ctx) {
         try {
             
             @SuppressWarnings("resource")
@@ -180,15 +184,18 @@ public class WebSocketHandler {
                     context.send(gson.toJson(notificationMessage));
                 }
             } else {
-                System.out.println("Failed to resign game: " + command.getGameID());
+                ErrorMessage errorMessage = new ErrorMessage("Error: Failed to resign game: " + command.getGameID());
+                ctx.send(gson.toJson(errorMessage));
             }
         } catch (DataAccessException e) {
-            System.out.println("Error resigning game: " + e.getMessage());
+            ErrorMessage errorMessage = new ErrorMessage("Error: " + e.getMessage());
+            ctx.send(gson.toJson(errorMessage));
         }
     }
 
     private void onError(WsErrorContext ctx) {
-        ctx.error();
+        ErrorMessage errorMessage = new ErrorMessage("Error: " + ctx.error().getMessage());
+        ctx.send(gson.toJson(errorMessage));
     }
 
     private void onClose(WsCloseContext ctx) {
