@@ -23,7 +23,7 @@ public class Client {
         this.authToken = null;
         this.gamesManager = new GamesManager(null);
 
-        this.serverFacade = new ServerFacade(serverUrl, gamesManager);
+        this.serverFacade = new ServerFacade(serverUrl, gamesManager, this.observe, this.gameplay);
 
 
         String preLoginHelpString = "This is the landing page menu. You can select an option by entering the number of the option."
@@ -87,10 +87,10 @@ public class Client {
 
         this.postlogin.addOption(new MenuOption("Create a new Chess Game", () -> serverFacade.createGame(this.authToken)));
         this.postlogin.addOption(new MenuOption("List all Chess Games available", () -> serverFacade.listGames(this.authToken)));
-        this.postlogin.addOption(new MenuOption("Join and begin playing a pre-existing Chess Game", () -> serverFacade.joinGame(this.authToken, this.gameplay)));
+        this.postlogin.addOption(new MenuOption("Join and begin playing a pre-existing Chess Game", () -> serverFacade.joinGame(this.authToken)));
         this.postlogin.addOption(new MenuOption(
             "Observe a pre-existing Chess Game, but not participate in it", 
-            () -> serverFacade.observeGame(this.authToken, this.observe))
+            () -> serverFacade.observeGame(this.authToken))
         );
         
         this.gameplay.addOption(new MenuOption("Redraw the chess board", () -> ChessPrinter.printBoard(this.gamesManager.getCurrentGame().getBoard(), this.gamesManager.getCurrentTeamColor())));

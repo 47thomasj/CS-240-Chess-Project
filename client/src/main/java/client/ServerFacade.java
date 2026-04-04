@@ -43,6 +43,8 @@ import menu.Menu;
 public class ServerFacade {
 
     private final Gson gson;
+    private final Menu observe;
+    private final Menu gameplay;
 
     private final GamesManager gamesManager;
 
@@ -56,13 +58,23 @@ public class ServerFacade {
     private final WebSocketRouter webSocketRouter;
 
     public ServerFacade(String serverUrl, GamesManager gamesManager) {
-        this(serverUrl, gamesManager, HttpClient.newHttpClient(), ContainerProvider.getWebSocketContainer());
+        this(
+            serverUrl, 
+            gamesManager,
+            new Menu("Leave", () -> {}, "Leave the game", "Enjoy the match (observing)!"),
+            new Menu("Leave", () -> {}, "Leave the game", "Enjoy the match!")
+        );
+    }
+    
+    public ServerFacade(String serverUrl, GamesManager gamesManager, Menu observe, Menu gameplay) {
+        this(serverUrl, gamesManager, HttpClient.newHttpClient(), ContainerProvider.getWebSocketContainer(), observe, gameplay);
     }
 
-    public ServerFacade(String serverUrl, GamesManager gamesManager, HttpClient client, WebSocketContainer webSocketContainer) {
+    public ServerFacade(String serverUrl, GamesManager gamesManager, HttpClient client, WebSocketContainer webSocketContainer, Menu observe, Menu gameplay) {
         this.gson = new Gson();
         this.gamesManager = gamesManager;
-
+        this.observe = observe;
+        this.gameplay = gameplay;
         this.logoutRouter = new LogoutRouter(serverUrl, client);
         this.loginRouter = new LoginRouter(serverUrl, gson, client);
         this.registerRouter = new RegisterRouter(serverUrl, gson, client);
@@ -117,7 +129,7 @@ public class ServerFacade {
         }
     }
 
-    public void observeGame(String authToken, Menu observe) {
+    public void observeGame(String authToken) {
         ListGamesOutcome outcome = this.listGamesRouter.doListGames(authToken);
         if (outcome instanceof ListGamesOutcome.Success) {
             gamesManager.setGames(((ListGamesOutcome.Success) outcome).games());
@@ -162,7 +174,7 @@ public class ServerFacade {
         }
     }
 
-    public void joinGame(String authToken, Menu gameplay) {
+    public void joinGame(String authToken) {
         ListGamesOutcome outcome = this.listGamesRouter.doListGames(authToken);
         if (outcome instanceof ListGamesOutcome.Success) {
             gamesManager.setGames(((ListGamesOutcome.Success) outcome).games());
