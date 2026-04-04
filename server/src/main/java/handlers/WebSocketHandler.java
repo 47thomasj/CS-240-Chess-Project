@@ -3,7 +3,7 @@ package handlers;
 import io.javalin.websocket.*;
 import websocket.commands.UserGameCommand;
 import com.google.gson.Gson;
-
+import java.util.Scanner;   
 import service.GameService;
 import service.WsService;
 import models.requests.LeaveGameRequest;
@@ -159,6 +159,15 @@ public class WebSocketHandler {
 
     private void onResign(UserGameCommand command) {
         try {
+            
+            @SuppressWarnings("resource")
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Are you sure you want to resign? (y/n)");
+            String input = scanner.nextLine();
+            if (!input.equals("y")) {
+                return;
+            }
+
             LeaveGameRequest request = new LeaveGameRequest(command.getAuthToken(), command.getGameID());
             LeaveGameResult result = gameService.resignGame(request);
             if (result.success()) {

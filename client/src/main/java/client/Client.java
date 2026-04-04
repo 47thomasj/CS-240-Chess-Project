@@ -97,6 +97,8 @@ public class Client {
         this.gameplay.addOption(new MenuOption("Highlight the moves a chosen piece can make", () -> ChessPrinter.printLegalMoves(this.gamesManager.getCurrentGame().getBoard(), this.gamesManager.getCurrentTeamColor())));
         this.gameplay.addOption(new MenuOption("Make a move", () -> serverFacade.makeMove(this.authToken, this.gamesManager.getCurrentGameID())));
         this.gameplay.addOption(new MenuOption("Resign (you lose the game)", () -> serverFacade.resignGame(this.authToken, this.gamesManager.getCurrentGameID())));
+    
+        this.observe.addOption(new MenuOption("Highlight the moves a chosen piece can make", () -> ChessPrinter.printLegalMoves(this.gamesManager.getCurrentGame().getBoard(), this.gamesManager.getCurrentTeamColor())));
     }
 
     public void run() {

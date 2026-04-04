@@ -61,6 +61,10 @@ public class ChessPrinter {
     }
 
     public static void printLegalMoves(ChessBoard board, TeamColor teamColor) {
+        if (teamColor == null) {
+            teamColor = TeamColor.WHITE;
+        }
+        
         ChessPosition position = getPositionFromUser();
         ChessPiece piece = board.getPiece(position);
         if (piece == null) {
