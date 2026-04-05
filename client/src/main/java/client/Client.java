@@ -16,37 +16,37 @@ public class Client {
     private ServerFacade serverFacade;
 
     private String authToken;
-    private GamesManager gamesManager;        
+    private GamesManager gamesManager;
+    
+    String preLoginHelpString = "This is the landing page menu. You can select an option by entering the number of the option."
+    + "\n\nOptions:"
+    + "\n1. Login with your username and password"
+    + "\n2. Register a new account"
+    + "\n3. Quit"
+    + "\n4. Display this help message again";
+    
+    String postLoginHelpString = "This is the main menu. You can select an option by entering the number of the option."
+    + "\n\nOptions:"
+    + "\n1. Create a new Chess Game"
+    + "\n2. List all Chess Games available"
+    + "\n3. Join and begin playing a pre-existing Chess Game"
+    + "\n4. Observe a pre-existing Chess Game, but not participate in it"
+    + "\n5. Logout of your account"
+    + "\n6. Display this help message again";
+
+    String gameplayHelpString = "This is the gameplay menu. You can select an option by entering the number of the option."
+    + "\n\nOptions:"
+    + "\n1. Redraw the chess board"
+    + "\n2. Leave the game"
+    + "\n3. Make a move"
+    + "\n4. Resign (you lose the game)"
+    + "\n5. Highlight the moves a chosen piece can make"
+    + "\n6. Display this help message again";
 
     public Client() {
         this.serverUrl = "http://localhost:8080";
         this.authToken = null;
         this.gamesManager = new GamesManager(null);
-
-        String preLoginHelpString = "This is the landing page menu. You can select an option by entering the number of the option."
-        + "\n\nOptions:"
-        + "\n1. Login with your username and password"
-        + "\n2. Register a new account"
-        + "\n3. Quit"
-        + "\n4. Display this help message again";
-        
-        String postLoginHelpString = "This is the main menu. You can select an option by entering the number of the option."
-        + "\n\nOptions:"
-        + "\n1. Create a new Chess Game"
-        + "\n2. List all Chess Games available"
-        + "\n3. Join and begin playing a pre-existing Chess Game"
-        + "\n4. Observe a pre-existing Chess Game, but not participate in it"
-        + "\n5. Logout of your account"
-        + "\n6. Display this help message again";
-
-        String gameplayHelpString = "This is the gameplay menu. You can select an option by entering the number of the option."
-        + "\n\nOptions:"
-        + "\n1. Redraw the chess board"
-        + "\n2. Leave the game"
-        + "\n3. Make a move"
-        + "\n4. Resign (you lose the game)"
-        + "\n5. Highlight the moves a chosen piece can make"
-        + "\n6. Display this help message again";
 
         this.prelogin = new Menu("Quit", () -> System.exit(0), preLoginHelpString, "Welcome to the Chess Game!");
         this.postlogin = new Menu("Logout", () -> {
