@@ -104,20 +104,22 @@ public class WebSocketHandler {
                 String username = wsService.getUsername(command.getAuthToken());
                 String notification = "\n" + username + " made a move: " + command.getMove().toString();
                 
-                NotificationMessage notificationMessage = null;
+                NotificationMessage notificationMessage = new NotificationMessage(notification);
+                NotificationMessage gameStatusNotification = null;
                 if (wsService.isPlayerInCheck(command.getAuthToken(), command.getGameID())) {
-                    notificationMessage = new NotificationMessage(notification + "\n" + username + " is in check.");
+                    gameStatusNotification = new NotificationMessage("\n" + username + " is in check.");
                 } else if (wsService.isPlayerInCheckmate(command.getAuthToken(), command.getGameID())) {
-                    notificationMessage = new NotificationMessage(notification + "\n" + username + " is in checkmate.");
+                    gameStatusNotification = new NotificationMessage("\n" + username + " is in checkmate.");
                 } else if (wsService.isPlayerInStalemate(command.getAuthToken(), command.getGameID())) {
-                    notificationMessage = new NotificationMessage(notification + "\n" + username + " is in stalemate.");
-                } else {
-                    notificationMessage = new NotificationMessage(notification);
+                    gameStatusNotification = new NotificationMessage("\n" + username + " is in stalemate.");
                 }
                 
                 List<WsContext> contexts = gameIdToContext.get(command.getGameID());
                 for (WsContext context : contexts) {
                     context.send(gson.toJson(message));
+                    if (gameStatusNotification != null) {
+                        context.send(gson.toJson(gameStatusNotification));
+                    }
                     if (!context.equals(ctx)) {
                         context.send(gson.toJson(notificationMessage));
                     }
