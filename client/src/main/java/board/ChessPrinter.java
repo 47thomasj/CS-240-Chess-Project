@@ -72,11 +72,18 @@ public class ChessPrinter {
             return;
         }
         Collection<ChessMove> moves = piece.pieceMoves(board, position);
-        Collection<ChessPosition> positionsToHighlight = moves.stream().map(ChessMove::getEndPosition).collect(Collectors.toCollection(ArrayList::new));
+        Collection<ChessPosition> positionsToHighlight = moves.stream()
+            .map(ChessMove::getEndPosition)
+            .collect(Collectors.toCollection(ArrayList::new));
         printBoardWithHighlights(board, teamColor, positionsToHighlight, position);
     }
     
-    private static void printBoardWithHighlights(ChessBoard board, TeamColor teamColor, Collection<ChessPosition> positionsToHighlight, ChessPosition rootPosition) {
+    private static void printBoardWithHighlights(
+        ChessBoard board, 
+        TeamColor teamColor, 
+        Collection<ChessPosition> positionsToHighlight, 
+        ChessPosition rootPosition
+    ) {
     String letters = teamColor == TeamColor.WHITE ? " a  b  c  d  e  f  g  h " : " h  g  f  e  d  c  b  a ";
 
     String[] numbers = new String[] {"1", "2", "3", "4", "5", "6", "7", "8"};
@@ -160,7 +167,10 @@ public class ChessPrinter {
         TeamColor colorAtPosition = pieceAtPosition != null ? pieceAtPosition.getTeamColor() : null;
         String textColor = colorAtPosition == TeamColor.WHITE ? teamTextColor : oponentTextColor;
         if (positionsToHighlight.contains(position)) {
-            currentColor = currentColor == EscapeSequences.SET_BG_COLOR_WHITE ? EscapeSequences.SET_BG_COLOR_GREEN : EscapeSequences.SET_BG_COLOR_DARK_GREEN;
+            currentColor = EscapeSequences.SET_BG_COLOR_DARK_GREEN;
+            if (colorAtPosition == TeamColor.WHITE) {
+                currentColor = EscapeSequences.SET_BG_COLOR_GREEN;
+            }
         } else if (position.equals(rootPosition)) {
             currentColor = EscapeSequences.SET_BG_COLOR_YELLOW;
         }

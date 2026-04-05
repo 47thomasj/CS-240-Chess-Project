@@ -28,7 +28,14 @@ public class WebSocketHandler {
     private final HashMap<Integer, List<WsContext>> gameIdToContext;
     private final HashMap<String, WsContext> authTokenToContext;
 
-    public WebSocketHandler(Gson gson, GameService gameService, WsService wsService, HashMap<Integer, List<WsContext>> gameIdToContext, HashMap<String, WsContext> authTokenToContext) {
+    public WebSocketHandler(
+        Gson gson, 
+        GameService gameService, 
+        WsService wsService, 
+        HashMap<Integer, 
+        List<WsContext>> gameIdToContext, 
+        HashMap<String, WsContext> authTokenToContext
+    ) {
         this.gson = gson;
         this.gameService = gameService;
         this.wsService = wsService;

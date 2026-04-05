@@ -70,7 +70,14 @@ public class ServerFacade {
         this(serverUrl, gamesManager, HttpClient.newHttpClient(), ContainerProvider.getWebSocketContainer(), observe, gameplay);
     }
 
-    public ServerFacade(String serverUrl, GamesManager gamesManager, HttpClient client, WebSocketContainer webSocketContainer, Menu observe, Menu gameplay) {
+    public ServerFacade(
+        String serverUrl, 
+        GamesManager gamesManager, 
+        HttpClient client, 
+        WebSocketContainer webSocketContainer, 
+        Menu observe, 
+        Menu gameplay
+    ) {
         this.gson = new Gson();
         this.gamesManager = gamesManager;
         this.observe = observe;
