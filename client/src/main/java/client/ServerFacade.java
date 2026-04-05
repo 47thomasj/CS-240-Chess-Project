@@ -211,6 +211,13 @@ public class ServerFacade {
 
     public void resignGame(String authToken, int gameID) {
         try {
+            @SuppressWarnings("resource")
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Are you sure you want to resign? (y/n)");
+            String input = scanner.nextLine();
+            if (!input.equals("y")) {
+                return;
+            }
             UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, gameID);
             webSocketRouter.send(command);
         } catch (Exception e) {
