@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import models.GameData;
+import chess.ChessGame;
 
 public class WebSocketHandler {
 
@@ -165,12 +166,22 @@ public class WebSocketHandler {
 
     private void onResign(UserGameCommand command, WsContext ctx) {
         try {
+            GameData game = wsService.getGame(command.getGameID());
+            String username = wsService.getUsername(command.getAuthToken());
+            if (!game.blackUsername().equals(username) && !game.whiteUsername().equals(username)) {
+                ErrorMessage errorMessage = new ErrorMessage("Cannot resign: You are not a player in this game");
+                ctx.send(gson.toJson(errorMessage));
+                return;
+            }
+            if (game.game().getTeamTurn().equals(ChessGame.TeamColor.NONE)) {
+                ErrorMessage errorMessage = new ErrorMessage("Cannot resign: Game is already over");
+                ctx.send(gson.toJson(errorMessage));
+                return;
+            }
 
             LeaveGameRequest request = new LeaveGameRequest(command.getAuthToken(), command.getGameID());
             LeaveGameResult result = gameService.resignGame(request);
             if (result.success()) {
-                String username = wsService.getUsername(command.getAuthToken());
-                GameData game = wsService.getGame(command.getGameID());
                 String notification = "\n" + username + " resigned the game: " + (game.gameName());
                 NotificationMessage notificationMessage = new NotificationMessage(notification);
                 List<WsContext> contexts = gameIdToContext.get(command.getGameID());
