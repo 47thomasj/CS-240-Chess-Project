@@ -76,8 +76,12 @@ public class GameService {
     }
 
     public MakeMoveResult makeMove(MakeMoveRequest request) throws DataAccessException {
-        authDAO.readAuth(request.authToken());
+        AuthData authData = authDAO.readAuth(request.authToken());
         GameData game = gameDAO.readGame(request.gameID());
+        String usernameOfCurrentTurn = game.game().getTeamTurn() == ChessGame.TeamColor.WHITE ? game.whiteUsername() : game.blackUsername();
+        if (!authData.username().equals(usernameOfCurrentTurn)) {
+            throw new DataAccessException("Error: move made out of turn");
+        }
         try {
             game.game().makeMove(request.move());
         } catch (InvalidMoveException e) {
