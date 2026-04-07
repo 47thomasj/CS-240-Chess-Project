@@ -113,12 +113,15 @@ public class WebSocketHandler {
                 
                 NotificationMessage notificationMessage = new NotificationMessage(notification);
                 NotificationMessage gameStatusNotification = null;
-                if (wsService.isPlayerInCheck(command.getAuthToken(), command.getGameID())) {
-                    gameStatusNotification = new NotificationMessage("\n" + username + " is in check.");
-                } else if (wsService.isPlayerInCheckmate(command.getAuthToken(), command.getGameID())) {
-                    gameStatusNotification = new NotificationMessage("\n" + username + " is in checkmate.");
-                } else if (wsService.isPlayerInStalemate(command.getAuthToken(), command.getGameID())) {
-                    gameStatusNotification = new NotificationMessage("\n" + username + " is in stalemate.");
+                String inCheckPlayer = wsService.isPlayerInCheck(command.getAuthToken(), command.getGameID());
+                String inCheckmatePlayer = wsService.isPlayerInCheckmate(command.getAuthToken(), command.getGameID());
+                String inStalematePlayer = wsService.isPlayerInStalemate(command.getAuthToken(), command.getGameID());
+                if (inCheckPlayer != null) {
+                    gameStatusNotification = new NotificationMessage("\n" + inCheckPlayer + " is in check.");
+                } else if (inCheckmatePlayer != null) {
+                    gameStatusNotification = new NotificationMessage("\n" + inCheckmatePlayer + " is in checkmate.");
+                } else if (inStalematePlayer != null) {
+                    gameStatusNotification = new NotificationMessage("\n" + inStalematePlayer + " is in stalemate.");
                 }
                 
                 List<WsContext> contexts = gameIdToContext.get(command.getGameID());
@@ -132,7 +135,7 @@ public class WebSocketHandler {
                     }
                 }
             } else {
-                ErrorMessage errorMessage = new ErrorMessage("Error: Failed to make move: " + command.getGameID());
+                ErrorMessage errorMessage = new ErrorMessage("\n\nError: Failed to make move: " + result.message());
                 ctx.send(gson.toJson(errorMessage));
             }
         } catch (DataAccessException e) {

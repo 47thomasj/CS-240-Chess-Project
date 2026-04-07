@@ -27,6 +27,7 @@ import routers.WebSocketRouter;
 import websocket.messages.ServerMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
+import websocket.messages.ErrorMessage;
 import chess.ChessGame.TeamColor;
 import chess.ChessPosition;
 import java.util.Scanner;
@@ -285,6 +286,10 @@ public class ServerFacade {
             else if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {
                 NotificationMessage notificationMessage = gson.fromJson(message, NotificationMessage.class);
                 System.out.println(notificationMessage.getMessage());
+            }
+            else if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.ERROR) {
+                ErrorMessage errorMessage = gson.fromJson(message, ErrorMessage.class);
+                System.out.println(errorMessage.getErrorMessage());
             }
         } catch (Exception e) {
             System.out.println("Could not parse message. " + e.getMessage());

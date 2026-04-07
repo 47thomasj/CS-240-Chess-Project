@@ -90,7 +90,10 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPiece piece = board.getPiece(move.getStartPosition());
-        if (piece != null && this.validMoves(move.getStartPosition()).contains(move) && teamTurn == piece.getTeamColor()) {
+        if (teamTurn != piece.getTeamColor()) {
+            throw new InvalidMoveException("Error: Cannot move opponent's piece");
+        }
+        if (piece != null && this.validMoves(move.getStartPosition()).contains(move)) {
             boolean isCastling = piece.getPieceType() == ChessPiece.PieceType.KING && 
                 Math.abs(move.getEndPosition().getColumn() - move.getStartPosition().getColumn()) == 2;
             
@@ -130,7 +133,7 @@ public class ChessGame {
             this.lastMove = move;
             this.teamTurn = this.teamTurn == TeamColor.WHITE ? TeamColor.BLACK: TeamColor.WHITE;
         } else {
-            throw new InvalidMoveException();
+            throw new InvalidMoveException("Error: Invalid move");
         }
 
     }

@@ -26,36 +26,36 @@ public class WsService {
         return gameDAO.readGame(gameID);
     }
 
-    public boolean isPlayerInCheck(String authToken, int gameID) throws DataAccessException {
+    public String isPlayerInCheck(String authToken, int gameID) throws DataAccessException {
         AuthData authData = authDAO.readAuth(authToken);
         GameData game = gameDAO.readGame(gameID);
-        if (Objects.equals(game.blackUsername(), authData.username())) {
-            return game.game().isInCheck(ChessGame.TeamColor.WHITE);
-        } else if (Objects.equals(game.whiteUsername(), authData.username())) {
-            return game.game().isInCheck(ChessGame.TeamColor.BLACK);
+        if (Objects.equals(game.blackUsername(), authData.username()) && game.game().isInCheck(ChessGame.TeamColor.WHITE)) {
+            return game.whiteUsername();
+        } else if (Objects.equals(game.whiteUsername(), authData.username()) && game.game().isInCheck(ChessGame.TeamColor.BLACK)) {
+            return game.blackUsername();
         }
-        return false;
+        return null;
     }
 
-    public boolean isPlayerInCheckmate(String authToken, int gameID) throws DataAccessException {
+    public String isPlayerInCheckmate(String authToken, int gameID) throws DataAccessException {
         AuthData authData = authDAO.readAuth(authToken);
         GameData game = gameDAO.readGame(gameID);
-        if (Objects.equals(game.blackUsername(), authData.username())) {
-            return game.game().isInCheckmate(ChessGame.TeamColor.WHITE);
-        } else if (Objects.equals(game.whiteUsername(), authData.username())) {
-            return game.game().isInCheckmate(ChessGame.TeamColor.BLACK);
+        if (Objects.equals(game.blackUsername(), authData.username()) && game.game().isInCheckmate(ChessGame.TeamColor.WHITE)) {
+            return game.whiteUsername();
+        } else if (Objects.equals(game.whiteUsername(), authData.username()) && game.game().isInCheckmate(ChessGame.TeamColor.BLACK)) {
+            return game.blackUsername();
         }
-        return false;
+        return null;
     }
 
-    public boolean isPlayerInStalemate(String authToken, int gameID) throws DataAccessException {
+    public String isPlayerInStalemate(String authToken, int gameID) throws DataAccessException {
         AuthData authData = authDAO.readAuth(authToken);
         GameData game = gameDAO.readGame(gameID);
-        if (Objects.equals(game.blackUsername(), authData.username())) {
-            return game.game().isInStalemate(ChessGame.TeamColor.WHITE);
-        } else if (Objects.equals(game.whiteUsername(), authData.username())) {
-            return game.game().isInStalemate(ChessGame.TeamColor.BLACK);
+        if (Objects.equals(game.blackUsername(), authData.username()) && game.game().isInStalemate(ChessGame.TeamColor.WHITE)) {
+            return game.whiteUsername();
+        } else if (Objects.equals(game.whiteUsername(), authData.username()) && game.game().isInStalemate(ChessGame.TeamColor.BLACK)) {
+            return game.blackUsername();
         }
-        return false;
+        return null;
     }
 }

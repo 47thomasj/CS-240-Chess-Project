@@ -4,6 +4,7 @@ import menu.Menu;
 import menu.MenuOption;
 
 import board.ChessPrinter;
+import chess.ChessGame;
 
 public class Client {
 
@@ -112,12 +113,20 @@ public class Client {
             "Resign (you lose the game)", 
             () -> serverFacade.resignGame(this.authToken, this.gamesManager.getCurrentGameID()
         )));
-    
+
+
+        this.observe.addOption(new MenuOption(
+            "Redraw the chess board", 
+            () -> ChessPrinter.printBoard(
+                this.gamesManager.getCurrentGame().getBoard(), 
+                ChessGame.TeamColor.WHITE
+            )
+        ));
         this.observe.addOption(new MenuOption(
             "Highlight the moves a chosen piece can make", 
             () -> ChessPrinter.printLegalMoves(
                 this.gamesManager.getCurrentGame().getBoard(), 
-                this.gamesManager.getCurrentTeamColor()
+                ChessGame.TeamColor.WHITE
             )
         ));
     
